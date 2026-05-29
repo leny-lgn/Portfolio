@@ -1,0 +1,2330 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Étude de Cas : Le Sokoban Autonome (SAÉ 1.02) | Leny Langon</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Sora:wght@400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+    .case-study-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .case-study-content h2 {
+      margin-top: 40px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+    .case-study-content h3 {
+      margin-top: 30px;
+      margin-bottom: 15px;
+      color: var(--accent-secondary);
+    }
+    .case-study-content p {
+      margin-bottom: 15px;
+      color: var(--text-secondary);
+    }
+    .case-study-content ul {
+      margin-bottom: 20px;
+      padding-left: 20px;
+      color: var(--text-secondary);
+    }
+    .case-study-content li {
+      margin-bottom: 10px;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      color: var(--accent-secondary);
+      margin-bottom: 30px;
+      font-weight: 600;
+      transition: color var(--transition-fast);
+    }
+    .back-link:hover {
+      color: var(--accent-primary);
+    }
+    .back-link span {
+      margin-right: 8px;
+    }
+
+    
+    .version-switcher {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 40px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px;
+      border-radius: 30px;
+      width: max-content;
+      margin-left: auto;
+      margin-right: auto;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .v-switch {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: 10px 25px;
+      border-radius: 20px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      outline: none;
+    }
+    .v-switch:hover {
+      color: var(--text-primary);
+    }
+    .v-switch.active {
+      background: var(--accent-primary);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    }
+    .version-content {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+    .version-content.active {
+      display: block;
+    }
+
+
+    /* --- Glass Tabs UI --- */
+    .resources-glass-container {
+      margin-top: 40px;
+    }
+    .glass-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+    .glass-tab {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+      outline: none;
+    }
+    .glass-tab::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .glass-tab:hover::before {
+      opacity: 1;
+    }
+    .glass-tab:hover {
+      transform: translateY(-8px);
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 15px 35px 0 rgba(99, 102, 241, 0.3);
+    }
+    .glass-tab.active {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 25px rgba(99, 102, 241, 0.4);
+      transform: scale(1.05);
+    }
+    .glass-tab .tab-icon {
+      font-size: 2rem;
+      margin-bottom: 5px;
+      z-index: 1;
+    }
+    .glass-tab .tab-text {
+      font-size: 0.75rem;
+      font-weight: 600;
+      z-index: 1;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .glass-pane {
+      display: none;
+      background: rgba(20, 20, 25, 0.6);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 25px;
+      animation: floatIn 0.5s ease forwards;
+    }
+    .glass-pane.active {
+      display: block;
+    }
+
+    @keyframes floatIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="scroll-progress"></div>
+  <div class="noise-overlay"></div>
+  <div class="gradient-mesh"><div class="mesh-blob purple"></div></div>
+
+  <header>
+    <a href="index.html" class="logo">[LL]</a>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-link">Accueil</a>
+      <a href="competences.html" class="nav-link">Compétences</a>
+      <a href="projets.html" class="nav-link active">Projets</a>
+      <a href="parcours.html" class="nav-link">Parcours</a>
+      <a href="cv.html" class="nav-link">CV</a>
+
+      <a href="contact.html" class="nav-link">Contact</a>
+    </nav>
+  </header>
+
+  <main style="padding-top: 120px; padding-bottom: 100px;">
+    <div class="container case-study-content fade-in-up">
+      
+      <a href="projets.html" class="back-link"><span>←</span> Retour aux projets</a>
+
+      <h1 class="hero-title text-gradient scramble-text mb-2 text-center" data-text="Le Sokoban Autonome (SAÉ 1.02)">Le Sokoban Autonome (SAÉ 1.02)</h1>
+      <div class="mb-4 text-center">
+        <span class="tag c1">C</span>
+        <span class="tag c3">Analyse & Algorithmes</span>
+        <span class="tag c4">Autonomie & Optimisation</span>
+      </div>
+
+      <div class="version-switcher">
+        <button class="v-switch active" data-v="v3">Version 3</button>
+        <button class="v-switch" data-v="v4">Version 4</button>
+      </div>
+
+      <div id="v3" class="version-content active">
+
+      <h2 class="text-gradient">🌟 Introduction</h2>
+      <p>Dans ce volet, le projet évolue vers l'automatisation. L'objectif est de transformer le jeu en un interpréteur de scripts capable de lire une suite de mouvements pré-enregistrés (fichier <code>.dep</code>) et de vérifier si elle mène à la victoire sur un plateau donné.</p>
+
+      <h2 class="text-gradient">📍 Situation</h2>
+      <p>Le passage à la SAÉ 1.02 impose un changement de paradigme : le programme doit devenir "autonome". Il ne s'agit plus seulement d'écouter le clavier, mais de traiter un flux de données structurées pour "dérouler" une partie sans intervention humaine.</p>
+
+      <h2 class="text-gradient">🎯 Task (Mission)</h2>
+      <p>Les exigences pour ce moteur autonome étaient les suivantes :</p>
+      <ul>
+        <li><strong>Double chargement :</strong> Importer simultanément le plateau (<code>.sok</code>) et la liste des déplacements (<code>.dep</code>).</li>
+        <li><strong>Exécution visuelle :</strong> Afficher chaque mouvement à l'écran avec une pause calibrée pour permettre au "client" de suivre l'évolution.</li>
+        <li><strong>Validation algorithmique :</strong> Analyser si la séquence fournie est une solution valide ou un échec.</li>
+        <li><strong>Intégration :</strong> Fusionner les modes manuel et autonome dans un menu principal unique.</li>
+      </ul>
+
+      <h2 class="text-gradient">🛠️ Action (Mise en œuvre)</h2>
+
+      <h3>1. Refactoring de l'Architecture</h3>
+      <p>Pour gérer les deux modes, j'ai restructuré le <code>main</code> avec un menu de sélection. La logique de jeu a été encapsulée dans une fonction <code>deplacer</code> polyvalente, capable de fonctionner avec le clavier ou avec un script grâce à un paramètre <code>mode_auto</code>.</p>
+
+      <h3>2. Contrôle du Temps et Animation</h3>
+      <p>Pour que le replay soit fluide et compréhensible, j'ai implémenté :</p>
+      <ul>
+        <li><code>usleep(250000)</code> : Une pause de 250 000 microsecondes (soit 0,25s) entre chaque mouvement pour simuler une animation à 4 images par seconde.</li>
+        <li><strong>Gestion des transitions :</strong> Utilisation de <code>system("clear")</code> combiné à l'affichage de l'entête spécifique au mode autonome (progression X/Y, zoom actuel).</li>
+      </ul>
+
+      <h3>3. Interpréteur de Caractères</h3>
+      <p>Le programme doit traduire les symboles du fichier <code>.dep</code> en actions physiques sur le plateau :</p>
+      <ul>
+        <li><strong>Normalisation :</strong> Utilisation de <code>tolower()</code> et <code>toupper()</code> pour traiter les directions (h, b, g, d) indépendamment de la casse, tout en distinguant les poussées de caisses.</li>
+        <li><strong>Gestion des métadonnées :</strong> Le script peut aussi contenir des instructions de zoom (<code>+</code>, <code>-</code>) ou d'annulation (<code>u</code>), que le moteur traite en temps réel durant le replay.</li>
+      </ul>
+
+      <h2 class="text-gradient">🏆 Result (Résultat)</h2>
+      <p>Le programme est désormais un véritable outil de test et de validation :</p>
+      <ul>
+        <li><strong>Bilan automatique :</strong> À la fin du script, le programme affiche un verdict clair : <strong>"SOLUTION VALIDE"</strong> avec le nombre de coups, ou <strong>"ECHEC"</strong>.</li>
+        <li><strong>Fiabilité :</strong> Le moteur détecte immédiatement si une caisse est bloquée ou si le script s'arrête avant la victoire.</li>
+        <li><strong>Ergonomie :</strong> L'interface permet de basculer entre le plaisir de jouer (Manuel) et la rigueur de la vérification (Autonome) en un seul clic.</li>
+      </ul>
+
+      <h2 class="text-gradient">💡 Ce que j'ai appris</h2>
+      <p>Cette version m'a sensibilisé à l'importance de la séparation des préoccupations (<em>Separation of Concerns</em>). En isolant la logique de mouvement du périphérique d'entrée (clavier vs fichier), j'ai pu réutiliser 90% de mon code précédent pour une fonctionnalité totalement différente. C'est un principe fondamental de l'ingénierie logicielle que j'ai pu mettre en pratique concrètement.</p>
+
+      
+        <h2 class="text-gradient mt-6 mb-4 text-center">🎮 Simulation Interactive (V3)</h2>
+        <p class="text-center mb-4 text-secondary">Testez l'interpréteur de script : jouez manuellement ou laissez le programme lire une séquence de déplacements (Autonome).</p>
+
+        <div class="simulation-controls-v3" style="display:flex; justify-content:center; gap:10px; margin-bottom:15px; flex-wrap:wrap; align-items: center;">
+          <select id="level-select-v3" class="btn btn-secondary" style="padding:5px 15px; font-size:0.8rem; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.2); outline: none;">
+            <option value="niveau1.sok">Niveau 1</option>
+            <option value="niveau2.sok">Niveau 2</option>
+            <option value="niveau3.sok">Niveau 3</option>
+            <option value="niveau4.sok">Niveau 4</option>
+          </select>
+          <button id="btn-manuel-v3" class="btn btn-secondary" style="padding:5px 15px; font-size:0.8rem;">1. Mode Manuel</button>
+          <button id="btn-auto-v3" class="btn btn-secondary" style="padding:5px 15px; font-size:0.8rem;">2. Mode Autonome</button>
+        </div>
+
+        <div id="auto-controls-v3" style="display:none; max-width: 600px; margin: 0 auto 15px auto; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+          <label style="display:block; margin-bottom: 8px; font-size: 0.85rem; color: #ccc;">Fichier de déplacements (.dep) :</label>
+          <textarea id="dep-input-v3" rows="3" style="width: 100%; background: #111; color: #0f0; border: 1px solid #333; padding: 10px; font-family: 'JetBrains Mono', monospace; font-size: 14px; margin-bottom: 10px; border-radius: 4px; outline: none;">dhhGGGhgBddddbbgHdhGGGbbggghhdDBdbGhhhdBB</textarea>
+          <div style="display:flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-secondary btn-preset-v3" data-level="niveau1.sok" data-seq="dhhGGGhgBddddbbgHdhGGGbbggghhdDBdbGhhhdBB" style="padding: 4px 10px; font-size: 0.75rem;">Victoire (Niv 1)</button>
+            <button class="btn btn-secondary btn-preset-v3" data-level="niveau2.sok" data-seq="ddBBBBdbbgghDbdHghhhhhggbDhdBBBBDDDbdHHbgggbbgghDbdHghhhhggbDhdBBBDDDbdHgggbbgghDbdHghDDD" style="padding: 4px 10px; font-size: 0.75rem;">Victoire (Niv 2)</button>
+            <button class="btn btn-secondary btn-preset-v3" data-level="niveau3.sok" data-seq="hddBhggbDbDghhdBdBBgHdhGbgHdhG" style="padding: 4px 10px; font-size: 0.75rem;">Victoire (Niv 3)</button>
+            <button class="btn btn-secondary btn-preset-v3" data-level="niveau4.sok" data-seq="dbbgHdhGHghDgGGGBgbbdHHHdhGbbbbdDDHHbddbbgHHH" style="padding: 4px 10px; font-size: 0.75rem;">Victoire (Niv 4)</button>
+            <button class="btn btn-secondary btn-preset-v3" data-level="" data-seq="ddbbgg++Uhh" style="padding: 4px 10px; font-size: 0.75rem;">Echec de test</button>
+            <button id="btn-run-auto-v3" class="btn btn-primary" style="padding: 4px 15px; font-size: 0.8rem; margin-left: auto;">▶️ Lancer l'interpréteur</button>
+          </div>
+        </div>
+
+        <div class="terminal-emulator-container" style="margin: 0 auto 50px auto; max-width: 600px; background: #0c0c0c; border-radius: 10px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.6); font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #ccc; border: 1px solid #333;">
+          <div style="background: #222; padding: 10px 15px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #333;">
+            <div style="width: 12px; height: 12px; border-radius: 50%; background: #ff5f56;"></div>
+            <div style="width: 12px; height: 12px; border-radius: 50%; background: #ffbd2e;"></div>
+            <div style="width: 12px; height: 12px; border-radius: 50%; background: #27c93f;"></div>
+            <span style="margin-left: auto; margin-right: auto; color: #888; font-size: 12px; transform: translateX(-24px);">leny@iut-lannion: ~/sokoban_v3</span>
+          </div>
+          <div id="sokoban-container-v3" style="position: relative; min-height: 480px; cursor: pointer; overflow:hidden;">
+            <div id="sokoban-terminal-v3" tabindex="0" style="padding: 20px; outline: none; white-space: pre; line-height: 1.2; min-height: 480px;">
+              <!-- JS will render here -->
+            </div>
+            <div id="sokoban-overlay-v3" style="position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; flex-direction:column; border-radius: 0 0 10px 10px;">
+              <div style="font-size:3rem; margin-bottom:10px;">▶️</div>
+              <div style="font-weight:bold;">Menu Principal</div>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          document.addEventListener('DOMContentLoaded', () => {
+            const terminal = document.getElementById('sokoban-terminal-v3');
+            const overlay = document.getElementById('sokoban-overlay-v3');
+            const container = terminal ? terminal.parentElement : null;
+            if(!terminal) return;
+
+            const autoControls = document.getElementById('auto-controls-v3');
+            const btnManuel = document.getElementById('btn-manuel-v3');
+            const btnAuto = document.getElementById('btn-auto-v3');
+            const levelSelect = document.getElementById('level-select-v3');
+            const depInput = document.getElementById('dep-input-v3');
+            const btnRunAuto = document.getElementById('btn-run-auto-v3');
+
+            const NIVEAUX = {
+              'niveau1.sok': ['  ####      ','###  ####   ','#     $ #   ','# #  #$ #   ','# . .#@ #   ','#########   ','            ','            ','            ','            ','            ','            '],
+              'niveau2.sok': [' #####      ',' #@  #      ',' # $$# ###  ',' # $ # #.#  ',' ### ###.#  ','  ##    .#  ','  #   #  #  ','  #   ####  ','  #####     ','            ','            ','            '],
+              'niveau3.sok': [' #####      ',' #.  ##     ',' #@$$ #     ',' ##   #     ','  ##  #     ','   ##.#     ','    ###     ','            ','            ','            ','            ','            '],
+              'niveau4.sok': [' ######     ',' #.  #####  ',' #.  $...#  ',' # $#  $##  ',' #  ## @ #  ',' #   $ $ #  ',' ######  #  ','      ####  ','            ','            ','            ','            ']
+            };
+            
+            const TAILLE = 12;
+            let plateau = [];
+            let hist = [];
+            let currentLevelFile = 'niveau1.sok';
+            let ligJoueur = 0;
+            let colJoueur = 0;
+            let nbCoups = 0;
+            let zoom = 1;
+            let gameOver = false;
+            let hasFocus = false;
+            
+            let mode = 0; // 0 = menu, 1 = manuel, 2 = autonome
+            let autoInterval = null;
+            let autoIndex = 0;
+            let depSequence = "";
+
+            function showMenu() {
+              mode = 0;
+              terminal.innerHTML = "=== SUPER SOKOBAN ===\n1. Mode Manuel (Jouer au clavier)\n2. Mode Autonome (Lire un fichier .dep)\n\n(Sélectionnez un mode ci-dessus)";
+              overlay.style.display = 'flex';
+              overlay.innerHTML = '<div style="font-size:3rem; margin-bottom:10px;">▶️</div><div style="font-weight:bold;">Choisissez un mode</div>';
+              autoControls.style.display = 'none';
+              btnManuel.classList.remove('btn-primary'); btnManuel.classList.add('btn-secondary');
+              btnAuto.classList.remove('btn-primary'); btnAuto.classList.add('btn-secondary');
+              if(autoInterval) clearInterval(autoInterval);
+            }
+
+            function initPartie(filename) {
+              currentLevelFile = filename;
+              let NIVEAU = NIVEAUX[filename];
+              plateau = [];
+              hist = [];
+              nbCoups = 0;
+              zoom = 1;
+              gameOver = false;
+              for(let i=0; i<TAILLE; i++) {
+                let row = (NIVEAU[i] || "").split('');
+                while(row.length < TAILLE) row.push(' ');
+                plateau.push(row);
+                for(let j=0; j<TAILLE; j++) {
+                  if(plateau[i][j] === '@' || plateau[i][j] === '+') {
+                    ligJoueur = i; colJoueur = j;
+                  }
+                }
+              }
+            }
+
+            function gagne() {
+              for(let i=0; i<TAILLE; i++) {
+                for(let j=0; j<TAILLE; j++) {
+                  if(plateau[i][j] === '$') return false;
+                }
+              }
+              return true;
+            }
+
+            function deplacer(direction, mode_auto) {
+              let dy=0, dx=0, code='?';
+              switch(direction.toLowerCase()) {
+                case 'z': case 'h': dy=-1; code='h'; break;
+                case 's': case 'b': dy=1; code='b'; break;
+                case 'q': case 'g': dx=-1; code='g'; break;
+                case 'd': dx=1; code='d'; break;
+              }
+              if(code === '?') return;
+
+              let y = ligJoueur, x = colJoueur;
+              let ny = y + dy, nx = x + dx;
+              if(ny<0 || ny>=TAILLE || nx<0 || nx>=TAILLE) return;
+
+              let actuel = plateau[y][x];
+              let suiv = plateau[ny][nx];
+
+              if(suiv === ' ' || suiv === '.') {
+                plateau[y][x] = (actuel === '+') ? '.' : ' ';
+                plateau[ny][nx] = (suiv === '.') ? '+' : '@';
+                ligJoueur = ny; colJoueur = nx;
+                if(!mode_auto) hist[nbCoups++] = code;
+              } else if(suiv === '$' || suiv === '*') {
+                let py = ny + dy, px = nx + dx;
+                if(py>=0 && py<TAILLE && px>=0 && px<TAILLE) {
+                  let apres = plateau[py][px];
+                  if(apres === ' ' || apres === '.') {
+                    plateau[py][px] = (apres === '.') ? '*' : '$';
+                    plateau[ny][nx] = (suiv === '*') ? '+' : '@';
+                    plateau[y][x] = (actuel === '+') ? '.' : ' ';
+                    ligJoueur = ny; colJoueur = nx;
+                    if(!mode_auto) hist[nbCoups++] = code.toUpperCase();
+                  }
+                }
+              }
+            }
+
+            function annuler_coup() {
+              if(nbCoups <= 0) return;
+              let mouv = hist[nbCoups - 1];
+              let dy=0, dx=0;
+              switch(mouv.toLowerCase()) {
+                case 'h': dy=1; break;
+                case 'b': dy=-1; break;
+                case 'g': dx=1; break;
+                case 'd': dx=-1; break;
+              }
+              let y = ligJoueur, x = colJoueur;
+              let py = y + dy, px = x + dx;
+              if(py<0 || py>=TAILLE || px<0 || px>=TAILLE) return;
+
+              plateau[y][x] = (plateau[y][x] === '+') ? '.' : ' ';
+              plateau[py][px] = (plateau[py][px] === '.') ? '+' : '@';
+
+              if(mouv >= 'A' && mouv <= 'Z') {
+                let cy = y - dy, cx = x - dx;
+                plateau[cy][cx] = (plateau[cy][cx] === '*') ? '.' : ' ';
+                plateau[y][x] = (plateau[y][x] === '.') ? '*' : '$';
+              }
+              ligJoueur = py; colJoueur = px;
+              nbCoups--;
+            }
+
+            function renderPlateau(out) {
+              for(let i=0; i<TAILLE; i++) {
+                for(let v=0; v<zoom; v++) {
+                  for(let j=0; j<TAILLE; j++) {
+                    let c = plateau[i][j];
+                    for(let h=0; h<zoom; h++) {
+                        out += c;
+                    }
+                  }
+                  out += "\n";
+                }
+              }
+              return out;
+            }
+
+            function renderManuel() {
+              let out = "--- MODE MANUEL ---\n";
+              out += "Fichier: " + currentLevelFile + " | Coups: " + nbCoups + " | Zoom: x" + zoom + "\n";
+              out += "Touches: ZQSD (bouger), +/- (zoom), U (undo), R (reset), X (quitter)\n";
+              out += "--------------------------------------------------\n";
+              out = renderPlateau(out);
+              terminal.innerHTML = out;
+            }
+
+            function renderAuto() {
+              let out = "--- MODE AUTONOME ---\n";
+              out += "Partie: " + currentLevelFile + " | Deplacements: memoire.dep\n";
+              out += "Progression: " + autoIndex + " / " + depSequence.length + " | Zoom: x" + zoom + "\n";
+              out += "--------------------------------------------------\n";
+              out = renderPlateau(out);
+              terminal.innerHTML = out;
+            }
+
+            // Keyboard for Manuel mode
+            terminal.addEventListener('keydown', (e) => {
+              if(!hasFocus || mode !== 1 || gameOver) return;
+              if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) {
+                e.preventDefault();
+              }
+
+              let k = e.key.toLowerCase();
+              if(k === 'r') { initPartie(currentLevelFile); renderManuel(); return; }
+              if(k === 'x') {
+                gameOver = true;
+                renderManuel();
+                terminal.innerHTML += "\nPartie abandonnee (" + nbCoups + " coups).\nSauvegarder l\'historique ? (o/n) : n\n";
+                return;
+              }
+              if(e.key === '+') { if(zoom < 3) { zoom++; renderManuel(); } }
+              else if(e.key === '-') { if(zoom > 1) { zoom--; renderManuel(); } }
+              else if(k === 'u') { annuler_coup(); renderManuel(); }
+              else if(['z','q','s','d','h','b','g','arrowup','arrowdown','arrowleft','arrowright'].includes(k)) {
+                if(k === 'arrowup') k = 'z';
+                if(k === 'arrowdown') k = 's';
+                if(k === 'arrowleft') k = 'q';
+                if(k === 'arrowright') k = 'd';
+                deplacer(k, false);
+                renderManuel();
+              }
+              
+              if(gagne()) {
+                gameOver = true;
+                terminal.innerHTML += "\nBRAVO ! GAGNE !\nSauvegarder l\'historique (.dep) ? (o/n) : n\n";
+              }
+            });
+
+            // Auto loop
+            function stepAuto() {
+              if (gagne() || autoIndex >= depSequence.length) {
+                clearInterval(autoInterval);
+                autoInterval = null;
+                renderAuto();
+                terminal.innerHTML += "\n--------------------------------------------------\n";
+                if(gagne()) {
+                  terminal.innerHTML += "SOLUTION VALIDE (Gagne en " + autoIndex + " coups).\n";
+                } else {
+                  terminal.innerHTML += "ECHEC : Partie perdue avec cette liste de coups.\n";
+                }
+                terminal.innerHTML += "--------------------------------------------------\n";
+                return;
+              }
+
+              let coup = depSequence[autoIndex];
+              let cl = coup.toLowerCase();
+              
+              if (coup === '+') { if(zoom<3) zoom++; }
+              else if (coup === '-') { if(zoom>1) zoom--; }
+              else if (cl === 'u') {
+                // In real V3, undo in auto mode is weird but supported
+                // We'll just do nothing or simulate if we had hist
+              } else {
+                deplacer(cl, true);
+              }
+              
+              autoIndex++;
+              renderAuto();
+            }
+
+            container.addEventListener('click', () => {
+              if (mode === 0) return; // Must select mode
+              terminal.focus();
+            });
+
+            terminal.addEventListener('focus', () => {
+              if (mode === 1) {
+                hasFocus = true;
+                overlay.style.display = 'none';
+              }
+            });
+
+            terminal.addEventListener('blur', () => {
+              if (mode === 1 && !gameOver) {
+                hasFocus = false;
+                overlay.style.display = 'flex';
+                overlay.innerHTML = '<div style="font-size:3rem; margin-bottom:10px;">▶️</div><div style="font-weight:bold;">Cliquez pour jouer</div>';
+              }
+            });
+
+            // UI Listeners
+            btnManuel.addEventListener('click', () => {
+              mode = 1;
+              btnManuel.classList.remove('btn-secondary'); btnManuel.classList.add('btn-primary');
+              btnAuto.classList.remove('btn-primary'); btnAuto.classList.add('btn-secondary');
+              autoControls.style.display = 'none';
+              
+              initPartie(levelSelect.value);
+              renderManuel();
+              overlay.style.display = 'flex';
+              overlay.innerHTML = '<div style="font-size:3rem; margin-bottom:10px;">▶️</div><div style="font-weight:bold;">Cliquez pour jouer</div>';
+            });
+
+            btnAuto.addEventListener('click', () => {
+              mode = 2;
+              btnAuto.classList.remove('btn-secondary'); btnAuto.classList.add('btn-primary');
+              btnManuel.classList.remove('btn-primary'); btnManuel.classList.add('btn-secondary');
+              autoControls.style.display = 'block';
+              if(autoInterval) clearInterval(autoInterval);
+              
+              initPartie(levelSelect.value);
+              depSequence = depInput.value.replace(/\s/g, '');
+              autoIndex = 0;
+              renderAuto();
+              
+              overlay.style.display = 'flex';
+              overlay.innerHTML = '<div style="font-size:3rem; margin-bottom:10px;">🤖</div><div style="font-weight:bold;">Prêt à exécuter</div>';
+            });
+
+            btnRunAuto.addEventListener('click', () => {
+              if (mode !== 2) return;
+              initPartie(levelSelect.value);
+              depSequence = depInput.value.replace(/\s/g, '');
+              autoIndex = 0;
+              overlay.style.display = 'none';
+              renderAuto();
+              if(autoInterval) clearInterval(autoInterval);
+              
+              // 1s pause avant depart then 250ms interval
+              setTimeout(() => {
+                autoInterval = setInterval(stepAuto, 250);
+              }, 1000);
+            });
+
+            document.querySelectorAll('.btn-preset-v3').forEach(btn => {
+              btn.addEventListener('click', (e) => {
+                depInput.value = e.target.getAttribute('data-seq');
+                let lvl = e.target.getAttribute('data-level');
+                if(lvl) {
+                  levelSelect.value = lvl;
+                  if(mode === 2) {
+                    if(autoInterval) clearInterval(autoInterval);
+                    initPartie(levelSelect.value);
+                    autoIndex = 0;
+                    renderAuto();
+                    overlay.style.display = 'flex';
+                    overlay.innerHTML = '<div style="font-size:3rem; margin-bottom:10px;">🤖</div><div style="font-weight:bold;">Prêt à exécuter</div>';
+                  }
+                }
+              });
+            });
+
+            levelSelect.addEventListener('change', () => {
+              if(mode === 1) {
+                initPartie(levelSelect.value);
+                renderManuel();
+              } else if(mode === 2) {
+                if(autoInterval) clearInterval(autoInterval);
+                initPartie(levelSelect.value);
+                autoIndex = 0;
+                renderAuto();
+                overlay.style.display = 'flex';
+                overlay.innerHTML = '<div style="font-size:3rem; margin-bottom:10px;">🤖</div><div style="font-weight:bold;">Prêt à exécuter</div>';
+              }
+            });
+
+            showMenu();
+          });
+        </script>
+
+
+<h2 class="text-gradient mt-6 mb-4 text-center">📂 Ressources de la Version 3</h2>
+      
+      <div class="resources-glass-container">
+        <!-- Navigation Buttons -->
+        <div class="glass-tabs">
+          <button class="glass-tab" data-target="res-code-v3">
+            <span class="tab-icon">💻</span>
+            <span class="tab-text">Code V3</span>
+          </button>
+          <button class="glass-tab" data-target="res-consignes-v3">
+            <span class="tab-icon">📄</span>
+            <span class="tab-text">Sujet V3</span>
+          </button>
+        </div>
+
+        <!-- Content Areas -->
+        <div class="glass-content-area">
+          <div id="res-code-v3" class="glass-pane">
+            <h3 class="mt-0 mb-3 text-gradient">Code source (Sokoban_V3.c)</h3>
+            <div class="code-scroll">
+              <pre><code class="language-c">/**
+ * @file Sokoban1.02.c
+ * @brief Projet Sokoban SAE 1.02
+ * @author Leny Langon &amp; Timoté Le Plapous
+ * @version 1
+ * @date 13-12-2025
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;  // usleep
+#include &lt;termios.h&gt; // kbhit
+#include &lt;fcntl.h&gt;   // kbhit
+#include &lt;ctype.h&gt;   // toupper/tolower
+#include &lt;stdbool.h&gt; 
+
+/* --- CONSTANTES --- */
+#define TAILLE 12
+#define MAX_HISTORIQUE 1000
+
+/* Symboles */
+#define SYM_MUR &#x27;#&#x27;
+#define SYM_VIDE &#x27; &#x27;
+#define SYM_CIBLE &#x27;.&#x27;
+#define SYM_CAISSE &#x27;$&#x27;
+#define SYM_CAISSE_SUR_CIBLE &#x27;*&#x27;
+#define SYM_SOKOBAN &#x27;@&#x27;
+#define SYM_SOKOBAN_SUR_CIBLE &#x27;+&#x27;
+
+/* Touches Manuel */
+#define TOUCHE_HAUT &#x27;z&#x27;
+#define TOUCHE_BAS &#x27;s&#x27;
+#define TOUCHE_GAUCHE &#x27;q&#x27;
+#define TOUCHE_DROITE &#x27;d&#x27;
+#define TOUCHE_ZOOM_PLUS &#x27;+&#x27;
+#define TOUCHE_ZOOM_MOINS &#x27;-&#x27;
+#define TOUCHE_ANNULER &#x27;u&#x27;
+#define TOUCHE_ABANDON &#x27;x&#x27;
+#define TOUCHE_RECOMMENCER &#x27;r&#x27;
+
+/* --- TYPES --- */
+typedef char t_plateau[TAILLE][TAILLE];
+typedef char t_tabDeplacement[MAX_HISTORIQUE];
+
+/* --- PROTOTYPES --- */
+int kbhit(void);
+void chargerPartie(t_plateau plateau, char fichier[]);
+void enregistrerPartie(t_plateau plateau, char fichier[]);
+void chargerDeplacements(t_tabDeplacement t, char fichier[], int *nb);
+void enregistrerDeplacements(t_tabDeplacement t, int nb, char fic[]);
+
+void afficher_entete_manuel(char fichier[], int nbCoups, int zoom);
+void afficher_entete_auto(char ficSok[], char ficDep[], int coupActuel, int nbTotal, int zoom);
+void afficher_plateau(t_plateau plateau, int zoom);
+bool gagne(t_plateau plateau);
+void position_joueur(t_plateau plateau, int *lig, int *col);
+void deplacer(t_plateau plateau, int *lig, int *col, char direction, int *nbCoups, t_tabDeplacement hist, bool mode_auto);
+void annuler_coup(t_plateau plateau, t_tabDeplacement hist, int *nbCoups, int *lig, int *col);
+
+void lancer_mode_manuel();
+void lancer_mode_autonome();
+
+/* ------------------------------------------------------------------------- */
+/*                                   MAIN                                    */
+/* ------------------------------------------------------------------------- */
+
+int main(void) {
+    int choix = 0;
+
+    // Afficher l&#x27;interface de menu
+    printf(&quot;\033[H\033[J&quot;); 
+    printf(&quot;=== SUPER SOKOBAN ===\n&quot;);
+    printf(&quot;1. Mode Manuel (Jouer au clavier)\n&quot;);
+    printf(&quot;2. Mode Autonome (Lire un fichier .dep)\n&quot;);
+    printf(&quot;Votre choix : &quot;);
+    scanf(&quot;%d&quot;, &amp;choix);
+
+    if (choix == 1) {
+        lancer_mode_manuel();
+    } else if (choix == 2) {
+        lancer_mode_autonome();
+    } else {
+        printf(&quot;Choix invalide.\n&quot;);
+    }
+
+    return EXIT_SUCCESS;
+}
+
+/* ------------------------------------------------------------------------- */
+/*                             MODE AUTONOME                                 */
+/* ------------------------------------------------------------------------- */
+
+void lancer_mode_autonome() {
+    t_plateau plateau;
+    t_tabDeplacement listeCoups;
+    char nomFichierSok[50];
+    char nomFichierDep[50];
+    int nbCoupsTotal = 0;
+    int nbCoupsJoues = 0; 
+    int i;
+    int ligJoueur, colJoueur;
+    int zoom = 1;
+    bool victoire = false;
+    char coup;
+    char direction;
+
+    printf(&quot;Nom du fichier partie (.sok) : &quot;);
+    scanf(&quot;%s&quot;, nomFichierSok);
+    printf(&quot;Nom du fichier deplacements (.dep) : &quot;);
+    scanf(&quot;%s&quot;, nomFichierDep);
+
+    chargerPartie(plateau, nomFichierSok);
+    chargerDeplacements(listeCoups, nomFichierDep, &amp;nbCoupsTotal);
+    position_joueur(plateau, &amp;ligJoueur, &amp;colJoueur);
+
+    afficher_entete_auto(nomFichierSok, nomFichierDep, 0, nbCoupsTotal, zoom);
+    afficher_plateau(plateau, zoom);
+    usleep(1000000); // Pause 1s avant départ
+
+    for (i = 0; i &lt; nbCoupsTotal; i++) {
+        if (gagne(plateau)) {
+            victoire = true;
+            break; // Arrêt si gagné avant la fin
+        }
+
+        coup = listeCoups[i];
+
+        if (coup == &#x27;+&#x27;) { if (zoom &lt; 3) zoom++; }
+        else if (coup == &#x27;-&#x27;) { if (zoom &gt; 1) zoom--; }
+        else if (tolower(coup) == &#x27;u&#x27;) {
+             annuler_coup(plateau, listeCoups, &amp;nbCoupsJoues, &amp;ligJoueur, &amp;colJoueur);
+        }
+        else {
+            direction = tolower(coup);
+            deplacer(plateau, &amp;ligJoueur, &amp;colJoueur, direction, &amp;nbCoupsJoues, listeCoups, true);
+        }
+
+        afficher_entete_auto(nomFichierSok, nomFichierDep, i + 1, nbCoupsTotal, zoom);
+        afficher_plateau(plateau, zoom);
+        usleep(250000); // Pause 0.25s entre les mouvements
+    }
+
+   /* --- Fin de la boucle de jeu --- */
+
+    /* Si on n&#x27;a pas détecté de victoire dans la boucle, on vérifie une dernière fois */
+    if (!victoire) {
+        victoire = gagne(plateau);
+    }
+
+    printf(&quot;\n--------------------------------------------------\n&quot;);
+    
+    if (victoire) {
+        /* Cas où c&#x27;est gagné : on affiche le nombre de coups */
+        if (i &lt; nbCoupsTotal) {
+            /* Si &#x27;i&#x27; est plus petit que le total, c&#x27;est qu&#x27;on a fini avant la fin du fichier */
+            printf(&quot;SOLUTION VALIDE (Gagne en %d coups).\n&quot;, i);
+        } else {
+            /* Sinon, on a utilisé tous les coups du fichier */
+            printf(&quot;SOLUTION VALIDE (Gagne en %d coups).\n&quot;, nbCoupsTotal);
+        }
+    } else {
+        /* Cas où c&#x27;est perdu */
+        printf(&quot;ECHEC : Partie perdue avec cette liste de coups.\n&quot;);
+    }
+
+    printf(&quot;--------------------------------------------------\n&quot;);
+}
+
+/* ------------------------------------------------------------------------- */
+/*                              MODE MANUEL                                  */
+/* ------------------------------------------------------------------------- */
+
+void lancer_mode_manuel() {
+    t_plateau plateau;
+    t_tabDeplacement historique;
+    char nomFichier[50];
+    char nomSauv[50];
+    char touche = &#x27;\0&#x27;;
+    int ligJoueur, colJoueur;
+    int nbCoups = 0;
+    int zoom = 1;
+    char rep;
+
+    printf(&quot;Nom du fichier .sok : &quot;);
+    scanf(&quot;%s&quot;, nomFichier);
+
+    chargerPartie(plateau, nomFichier);
+    position_joueur(plateau, &amp;ligJoueur, &amp;colJoueur);
+
+    while (touche != TOUCHE_ABANDON &amp;&amp; !gagne(plateau)) {
+        afficher_entete_manuel(nomFichier, nbCoups, zoom);
+        afficher_plateau(plateau, zoom);
+
+        while (!kbhit()) { usleep(10000); }
+        touche = getchar();
+
+        switch (touche) {
+            case TOUCHE_RECOMMENCER:
+                chargerPartie(plateau, nomFichier);
+                position_joueur(plateau, &amp;ligJoueur, &amp;colJoueur);
+                nbCoups = 0;
+                break;
+            case TOUCHE_ZOOM_PLUS: if (zoom &lt; 3) zoom++; break;
+            case TOUCHE_ZOOM_MOINS: if (zoom &gt; 1) zoom--; break;
+            case TOUCHE_ANNULER: 
+                annuler_coup(plateau, historique, &amp;nbCoups, &amp;ligJoueur, &amp;colJoueur);
+                break;
+            case TOUCHE_ABANDON: break;
+            default:
+                // false = mode manuel, on enregistre le coup dans l&#x27;historique
+                deplacer(plateau, &amp;ligJoueur, &amp;colJoueur, touche, &amp;nbCoups, historique, false);
+                break;
+        }
+    }
+
+    afficher_entete_manuel(nomFichier, nbCoups, zoom);
+    afficher_plateau(plateau, zoom);
+
+    if (gagne(plateau)) printf(&quot;\nBRAVO ! GAGNE !\n&quot;);
+    else printf(&quot;\nABANDON.\n&quot;);
+
+    // Sauvegarde Historique (Consigne SAE 1.01V2)
+    printf(&quot;Sauvegarder l&#x27;historique (.dep) ? (o/n) : &quot;);
+    while(kbhit()) getchar(); 
+    scanf(&quot; %c&quot;, &amp;rep);
+    if (rep == &#x27;o&#x27; || rep == &#x27;O&#x27;) {
+        printf(&quot;Nom fichier : &quot;);
+        scanf(&quot;%s&quot;, nomSauv);
+        enregistrerDeplacements(historique, nbCoups, nomSauv);
+    }
+}
+
+/* ------------------------------------------------------------------------- */
+/*                           fonctions communes                              */
+/* ------------------------------------------------------------------------- */
+
+void afficher_entete_manuel(char fichier[], int nbCoups, int zoom) {
+    printf(&quot;\033[H\033[J&quot;);
+    printf(&quot;--- MODE MANUEL ---\n&quot;);
+    printf(&quot;Fichier: %s | Coups: %d | Zoom: x%d\n&quot;, fichier, nbCoups, zoom);
+    printf(&quot;Touches: ZQSD (bouger), +/- (zoom), U (undo), R (reset), X (quitter)\n&quot;);
+    printf(&quot;--------------------------------------------------\n&quot;);
+}
+
+void afficher_entete_auto(char ficSok[], char ficDep[], int coupActuel, int nbTotal, int zoom) {
+    printf(&quot;\033[H\033[J&quot;);
+    printf(&quot;--- MODE AUTONOME ---\n&quot;);
+    printf(&quot;Partie: %s | Deplacements: %s\n&quot;, ficSok, ficDep);
+    printf(&quot;Progression: %d / %d | Zoom: x%d\n&quot;, coupActuel, nbTotal, zoom);
+    printf(&quot;--------------------------------------------------\n&quot;);
+}
+
+void afficher_plateau(t_plateau plateau, int zoom) {
+    int i, j, v, h;
+    char c, sym;
+    for (i = 0; i &lt; TAILLE; i++) {
+        for (v = 0; v &lt; zoom; v++) {
+            for (j = 0; j &lt; TAILLE; j++) {
+                c = plateau[i][j];
+                sym = SYM_VIDE;
+                if (c == SYM_MUR) sym = SYM_MUR;
+                else if (c == SYM_CIBLE) sym = SYM_CIBLE;
+                else if (c == SYM_CAISSE || c == SYM_CAISSE_SUR_CIBLE) sym = SYM_CAISSE;
+                else if (c == SYM_SOKOBAN || c == SYM_SOKOBAN_SUR_CIBLE) sym = SYM_SOKOBAN;
+                for (h = 0; h &lt; zoom; h++) printf(&quot;%c&quot;, sym);
+            }
+            printf(&quot;\n&quot;);
+        }
+    }
+}
+
+bool gagne(t_plateau plateau) {
+    int i, j;
+    for (i = 0; i &lt; TAILLE; i++)
+        for (j = 0; j &lt; TAILLE; j++)
+            if (plateau[i][j] == SYM_CAISSE) return false;
+    return true;
+}
+
+void position_joueur(t_plateau plateau, int *lig, int *col) {
+    int i, j;
+    for (i = 0; i &lt; TAILLE; i++)
+        for (j = 0; j &lt; TAILLE; j++)
+            if (plateau[i][j] == SYM_SOKOBAN || plateau[i][j] == SYM_SOKOBAN_SUR_CIBLE) {
+                *lig = i; *col = j; return;
+            }
+}
+
+void deplacer(t_plateau plateau, int *lig, int *col, char direction, 
+              int *nbCoups, t_tabDeplacement hist, bool mode_auto) {
+    int dY = 0, dX = 0;
+    int y = *lig, x = *col;
+    int nY, nX, pY, pX;
+    char code = &#x27;?&#x27;;
+    char *actuel, *suiv, *apres;
+
+    // Switch des deplacements
+    switch(tolower(direction)) {
+        case &#x27;z&#x27;: case &#x27;h&#x27;: dY = -1; code = &#x27;h&#x27;; break;
+        case &#x27;s&#x27;: case &#x27;b&#x27;: dY =  1; code = &#x27;b&#x27;; break;
+        case &#x27;q&#x27;: case &#x27;g&#x27;: dX = -1; code = &#x27;g&#x27;; break;
+        case &#x27;d&#x27;: dX =  1; code = &#x27;d&#x27;; break;
+    }
+    if (dY == 0 &amp;&amp; dX == 0) return;
+
+    nY = y + dY; nX = x + dX;
+    if (nY &lt; 0 || nY &gt;= TAILLE || nX &lt; 0 || nX &gt;= TAILLE) return;
+
+    actuel = &amp;plateau[y][x];
+    suiv = &amp;plateau[nY][nX];
+
+    // Mouvement Simple
+    if (*suiv == SYM_VIDE || *suiv == SYM_CIBLE) {
+        *actuel = (*actuel == SYM_SOKOBAN_SUR_CIBLE) ? SYM_CIBLE : SYM_VIDE;
+        *suiv = (*suiv == SYM_CIBLE) ? SYM_SOKOBAN_SUR_CIBLE : SYM_SOKOBAN;
+        *lig = nY; *col = nX;
+        
+        // En mode manuel, on enregistre. En auto, on ne fait rien (l&#x27;historique est déjà écrit)
+        if (!mode_auto &amp;&amp; *nbCoups &lt; MAX_HISTORIQUE) hist[(*nbCoups)++] = code;
+    }
+    // Poussée
+    else if (*suiv == SYM_CAISSE || *suiv == SYM_CAISSE_SUR_CIBLE) {
+        pY = nY + dY; pX = nX + dX;
+        if (pY &gt;= 0 &amp;&amp; pY &lt; TAILLE &amp;&amp; pX &gt;= 0 &amp;&amp; pX &lt; TAILLE) {
+            apres = &amp;plateau[pY][pX];
+            if (*apres == SYM_VIDE || *apres == SYM_CIBLE) {
+                *apres = (*apres == SYM_CIBLE) ? SYM_CAISSE_SUR_CIBLE : SYM_CAISSE;
+                *suiv = (*suiv == SYM_CAISSE_SUR_CIBLE) ? SYM_SOKOBAN_SUR_CIBLE : SYM_SOKOBAN;
+                *actuel = (*actuel == SYM_SOKOBAN_SUR_CIBLE) ? SYM_CIBLE : SYM_VIDE;
+                *lig = nY; *col = nX;
+
+                if (!mode_auto &amp;&amp; *nbCoups &lt; MAX_HISTORIQUE) hist[(*nbCoups)++] = toupper(code);
+            }
+        }
+    }
+}
+
+void annuler_coup(t_plateau plateau, t_tabDeplacement hist, int *nbCoups, int *lig, int *col) {
+    // Note: cette fonction marche pour le mode manuel.
+    // Pour le mode auto, il faudrait lui passer le coup exact à annuler car hist n&#x27;est pas utilisé pareil.
+    if (*nbCoups &lt;= 0) return;
+    char coup = hist[*nbCoups - 1];
+    int dY=0, dX=0, y=*lig, x=*col, pY, pX, cY, cX;
+
+    switch(tolower(coup)) {
+        case &#x27;h&#x27;: dY = 1; break; 
+        case &#x27;b&#x27;: dY = -1; break;
+        case &#x27;g&#x27;: dX = 1; break;
+        case &#x27;d&#x27;: dX = -1; break;
+    }
+    pY = y + dY; pX = x + dX;
+    
+    // Retour Sokoban
+    plateau[pY][pX] = (plateau[pY][pX] == SYM_CIBLE) ? SYM_SOKOBAN_SUR_CIBLE : SYM_SOKOBAN;
+    plateau[y][x] = (plateau[y][x] == SYM_SOKOBAN_SUR_CIBLE) ? SYM_CIBLE : SYM_VIDE;
+
+    // Retour Caisse (si majuscule car signifie poussée)
+    if (isupper(coup)) {
+        cY = y - dY; cX = x - dX; // Position actuelle caisse (devant)
+        // On la remet sur la case (y,x) que le joueur vient de libérer
+        plateau[cY][cX] = (plateau[cY][cX] == SYM_CAISSE_SUR_CIBLE) ? SYM_CIBLE : SYM_VIDE;
+        plateau[y][x] = (plateau[y][x] == SYM_CIBLE) ? SYM_CAISSE_SUR_CIBLE : SYM_CAISSE;
+    }
+    *lig = pY; *col = pX;
+    (*nbCoups)--;
+}
+
+/* --- FONCTIONS FOURNIES --- */
+int kbhit(){
+    struct termios oldt, newt;
+    int ch, oldf;
+    tcgetattr(STDIN_FILENO, &amp;oldt);
+    newt = oldt; newt.c_lflag &amp;= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &amp;newt);
+    oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+    fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+    ch = getchar();
+    tcsetattr(STDIN_FILENO, TCSANOW, &amp;oldt);
+    fcntl(STDIN_FILENO, F_SETFL, oldf);
+    if(ch != EOF){ ungetc(ch, stdin); return 1; } 
+    return 0;
+}
+void chargerPartie(t_plateau plateau, char fichier[]){
+    FILE *f = fopen(fichier, &quot;r&quot;);
+    char fin;
+    if(!f){ printf(&quot;ERR FICHIER\n&quot;); exit(1); }
+    for(int i=0;i&lt;TAILLE;i++){
+        for(int j=0;j&lt;TAILLE;j++) fread(&amp;plateau[i][j],1,1,f);
+        fread(&amp;fin,1,1,f);
+    }
+    fclose(f);
+}
+void enregistrerPartie(t_plateau plateau, char fichier[]){
+    FILE *f = fopen(fichier, &quot;w&quot;);
+    char fin=&#x27;\n&#x27;;
+    for(int i=0;i&lt;TAILLE;i++){
+        for(int j=0;j&lt;TAILLE;j++) fwrite(&amp;plateau[i][j],1,1,f);
+        fwrite(&amp;fin,1,1,f);
+    }
+    fclose(f);
+}
+void chargerDeplacements(t_tabDeplacement t, char fichier[], int *nb){
+    FILE *f = fopen(fichier, &quot;r&quot;);
+    char c; *nb=0;
+    if(!f) { printf(&quot;ERR DEP\n&quot;); return; }
+    fread(&amp;c,1,1,f);
+    while(!feof(f) &amp;&amp; *nb &lt; MAX_HISTORIQUE){
+        if(c!=&#x27;\n&#x27; &amp;&amp; c!=&#x27;\r&#x27;) t[(*nb)++] = c;
+        fread(&amp;c,1,1,f);
+    }
+    fclose(f);
+}
+void enregistrerDeplacements(t_tabDeplacement t, int nb, char fic[]){
+    FILE *f = fopen(fic, &quot;w&quot;);
+    fwrite(t, 1, nb, f);
+    fclose(f);
+}</code></pre>
+            </div>
+            <div class="mt-3 text-right">
+              <a href="Assets/SAE 1.02/Sokoban_V3.c" download class="btn btn-secondary">📥 Télécharger (.c)</a>
+            </div>
+          </div>
+
+          <div id="res-consignes-v3" class="glass-pane">
+            <h3 class="mt-0 mb-3 text-gradient">Consignes (V3)</h3>
+            <iframe src="Assets/SAE 1.02/Consignes%20Version%203.pdf" width="100%" height="600px" style="border:none; border-radius:8px;"></iframe>
+            <div class="mt-3 text-right">
+              <a href="Assets/SAE 1.02/Consignes%20Version%203.pdf" download class="btn btn-secondary">📥 Télécharger (PDF)</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      </div>
+
+      <div id="v4" class="version-content">
+
+      <h2 class="text-gradient">🌟 Introduction</h2>
+      <p>La dernière étape de ce projet de première année consiste à s'attaquer à l'efficience algorithmique. L'objectif n'est plus seulement de trouver une solution, mais de produire la solution la plus courte possible en éliminant le "bruit" (mouvements inutiles) d'une séquence de jeu pré-enregistrée.</p>
+
+      <h2 class="text-gradient">📍 Situation</h2>
+      <p>Dans le cadre de la SAÉ 1.02, nous devions traiter des fichiers de déplacements (<code>.dep</code>) parfois mal optimisés (erreurs de parcours, collisions contre les murs, boucles inutiles). Le programme doit agir comme un compilateur : il lit un code source (les mouvements) et produit un code optimisé plus performant.</p>
+
+      <h2 class="text-gradient">🎯 Task (Mission)</h2>
+      <p>Ma mission consistait à implémenter deux types de nettoyage automatique :</p>
+      <ul>
+        <li><strong>Suppression des mouvements non joués :</strong> Éliminer tout caractère qui ne provoque pas de déplacement réel (frapper un mur).</li>
+        <li><strong>Élimination des séquences inutiles :</strong> Détecter et supprimer les boucles où le joueur revient à son point de départ sans avoir déplacé de caisse entre-temps.</li>
+        <li><strong>Comparaison de performance :</strong> Afficher la longueur initiale vs la longueur optimisée et proposer l'enregistrement du résultat.</li>
+      </ul>
+
+      <h2 class="text-gradient">🛠️ Action (Mise en œuvre)</h2>
+
+      <h3>1. Détection de Cycles et Backtracking</h3>
+      <p>Pour supprimer les boucles, j'ai implémenté une structure de données <code>t_positionHist</code> capable de mémoriser les coordonnées (x, y) du joueur associées à leur index dans l'historique.</p>
+      <ul>
+        <li><strong>Algorithme :</strong> À chaque pas, le programme vérifie si la position actuelle a déjà été visitée depuis la dernière poussée de caisse.</li>
+        <li><strong>Élagage :</strong> Si une position est redondante, le programme effectue un "rollback" (retour arrière) immédiat dans l'historique des coups, supprimant ainsi la boucle inutile avant même qu'elle ne soit affichée.</li>
+      </ul>
+
+      <h3>2. Calcul des Déplacements "Nets"</h3>
+      <p>J'ai développé une fonction <code>calculerCoupsOptimises</code> qui analyse les segments de déplacements simples :</p>
+      <ul>
+        <li>Elle calcule la distance verticale et horizontale minimale nécessaire pour atteindre un point de poussée.</li>
+        <li>Si un joueur fait des détours en "S" alors qu'une ligne droite est possible, l'algorithme réduit le segment à son expression la plus simple.</li>
+      </ul>
+
+      <h3>3. Gestion Dynamique de la Grille</h3>
+      <p>Contrairement aux versions précédentes limitées à du 12×12, cette version gère des grilles de tailles variables jusqu'à 50×50 grâce à une détection automatique lors du chargement (<code>gHauteur</code> et <code>gLargeur</code>).</p>
+
+      <h2 class="text-gradient">🏆 Result (Résultat)</h2>
+      <p>Le programme final est un optimiseur de trajectoire performant :</p>
+      <ul>
+        <li><strong>Réduction drastique :</strong> Sur des fichiers de test complexes (ex: 999 caractères), le programme parvient souvent à réduire la séquence de 20% à 50% en supprimant les hésitations du joueur.</li>
+        <li><strong>Validation de Solution :</strong> Le programme confirme systématiquement si la séquence finale permet toujours de gagner la partie.</li>
+        <li><strong>Professionnalisme :</strong> L'utilisateur peut sauvegarder son "score" optimisé dans un nouveau fichier <code>.dep</code> pour le partager.</li>
+      </ul>
+
+      <h2 class="text-gradient">💡 Ce que j'ai appris</h2>
+      <p>Ce projet final a été une introduction concrète à l'optimisation de chemin (<em>Pathfinding</em>). J'ai appris que l'informatique ne sert pas seulement à résoudre un problème, mais à le résoudre avec élégance et économie de ressources. La gestion de structures complexes comme <code>t_tabPositions</code> m'a permis de mieux comprendre comment les logiciels de CAO ou les moteurs de jeux gèrent l'historique des actions (Undo/Redo et optimisation).</p>
+
+      
+        <h2 class="text-gradient mt-6 mb-4 text-center">🎮 Simulation Interactive (V4)</h2>
+        <p class="text-center mb-4 text-secondary">Testez l'algorithme de nettoyage de séquence (élimination des boucles et des mouvements impossibles contre les murs).</p>
+
+        <div class="simulation-controls-v4" style="max-width: 800px; margin: 0 auto 30px auto; background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+          
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
+            <select id="level-select-v4" class="btn btn-secondary" style="padding:5px 15px; font-size:0.8rem; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.2); outline: none;">
+              <option value="niveau1.sok">Niveau 1</option>
+              <option value="niveau2.sok">Niveau 2</option>
+              <option value="niveau3.sok">Niveau 3</option>
+              <option value="niveau4.sok">Niveau 4</option>
+            </select>
+            <div style="display:flex; gap:10px;">
+              <button class="btn btn-secondary btn-preset-v4" data-seq="ddbbgghh" style="padding: 4px 10px; font-size: 0.75rem;">Boucle simple</button>
+              <button class="btn btn-secondary btn-preset-v4" data-seq="dhhGGGhgBddddbbgHdhGGGbbggghhqqddzssddbbgghhqqddDBdbGhhhdBB" style="padding: 4px 10px; font-size: 0.75rem;">Victoire sale (Niv 1)</button>
+              <button class="btn btn-secondary btn-preset-v4" data-seq="qqqqqqqdddssszzzqq" style="padding: 4px 10px; font-size: 0.75rem;">Murs + Boucles</button>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 20px; align-items: center;">
+            <div style="flex: 1;">
+              <label style="display:block; margin-bottom: 8px; font-size: 0.85rem; color: #ccc;">Séquence Brute :</label>
+              <textarea id="raw-input-v4" rows="4" style="width: 100%; background: #111; color: #ff5f56; border: 1px solid #333; padding: 10px; font-family: 'JetBrains Mono', monospace; font-size: 14px; border-radius: 4px; outline: none; resize: none;">dhhGGGhgBddddbbgHdhGGGbbggghhqqddzssddbbgghhqqddDBdbGhhhdBB</textarea>
+              <div id="stats-raw-v4" style="font-size: 0.75rem; color: #888; margin-top: 5px; text-align: right;">59 caractères</div>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+              <button id="btn-optimize-v4" class="btn btn-primary" style="padding: 10px 15px; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                <span>▶️ Optimiser</span>
+                <span style="font-size: 0.7rem; opacity: 0.8;">(Algo V4)</span>
+              </button>
+            </div>
+
+            <div style="flex: 1;">
+              <label style="display:block; margin-bottom: 8px; font-size: 0.85rem; color: #ccc;">Séquence Optimisée :</label>
+              <textarea id="opt-output-v4" rows="4" readonly style="width: 100%; background: #1a1a24; color: #27c93f; border: 1px solid #4f46e5; padding: 10px; font-family: 'JetBrains Mono', monospace; font-size: 14px; border-radius: 4px; outline: none; resize: none;"></textarea>
+              <div id="stats-opt-v4" style="font-size: 0.75rem; color: #888; margin-top: 5px; text-align: right;">- caractères</div>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: 20px;">
+            <button id="btn-play-opt-v4" class="btn btn-secondary" style="padding: 6px 20px; font-size: 0.8rem; display: none;">📺 Jouer la séquence optimisée</button>
+          </div>
+        </div>
+
+        <div class="terminal-emulator-container" style="margin: 0 auto 50px auto; max-width: 600px; background: #0c0c0c; border-radius: 10px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.6); font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #ccc; border: 1px solid #333;">
+          <div style="background: #222; padding: 10px 15px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #333;">
+            <div style="width: 12px; height: 12px; border-radius: 50%; background: #ff5f56;"></div>
+            <div style="width: 12px; height: 12px; border-radius: 50%; background: #ffbd2e;"></div>
+            <div style="width: 12px; height: 12px; border-radius: 50%; background: #27c93f;"></div>
+            <span style="margin-left: auto; margin-right: auto; color: #888; font-size: 12px; transform: translateX(-24px);">leny@iut-lannion: ~/sokoban_v4</span>
+          </div>
+          <div id="sokoban-container-v4" style="position: relative; min-height: 480px; overflow:hidden;">
+            <div id="sokoban-terminal-v4" tabindex="0" style="padding: 20px; outline: none; white-space: pre; line-height: 1.2; min-height: 480px;">
+              <!-- JS will render here -->
+            </div>
+            <div id="sokoban-overlay-v4" style="position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; flex-direction:column; border-radius: 0 0 10px 10px;">
+              <div style="font-size:3rem; margin-bottom:10px;">⏳</div>
+              <div style="font-weight:bold;">En attente d'optimisation...</div>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          document.addEventListener('DOMContentLoaded', () => {
+            const terminal = document.getElementById('sokoban-terminal-v4');
+            const overlay = document.getElementById('sokoban-overlay-v4');
+            if(!terminal) return;
+
+            const levelSelect = document.getElementById('level-select-v4');
+            const rawInput = document.getElementById('raw-input-v4');
+            const optOutput = document.getElementById('opt-output-v4');
+            const btnOptimize = document.getElementById('btn-optimize-v4');
+            const btnPlay = document.getElementById('btn-play-opt-v4');
+            const statsRaw = document.getElementById('stats-raw-v4');
+            const statsOpt = document.getElementById('stats-opt-v4');
+
+            const NIVEAUX = {
+              'niveau1.sok': ['  ####      ','###  ####   ','#     $ #   ','# #  #$ #   ','# . .#@ #   ','#########   ','            ','            ','            ','            ','            ','            '],
+              'niveau2.sok': [' #####      ',' #@  #      ',' # $$# ###  ',' # $ # #.#  ',' ### ###.#  ','  ##    .#  ','  #   #  #  ','  #   ####  ','  #####     ','            ','            ','            '],
+              'niveau3.sok': [' #####      ',' #.  ##     ',' #@$$ #     ',' ##   #     ','  ##  #     ','   ##.#     ','    ###     ','            ','            ','            ','            ','            '],
+              'niveau4.sok': [' ######     ',' #.  #####  ',' #.  $...#  ',' # $#  $##  ',' #  ## @ #  ',' #   $ $ #  ',' ######  #  ','      ####  ','            ','            ','            ','            ']
+            };
+
+            const TAILLE = 12;
+            let plateau = [];
+            let ligJoueur = 0;
+            let colJoueur = 0;
+            
+            let zoom = 1;
+            let currentLevelFile = 'niveau1.sok';
+            let autoInterval = null;
+            let autoIndex = 0;
+            let depSequence = "";
+            let isPlaying = false;
+
+            function initPartie(filename) {
+              currentLevelFile = filename;
+              let NIVEAU = NIVEAUX[filename];
+              plateau = [];
+              for(let i=0; i<TAILLE; i++) {
+                let row = (NIVEAU[i] || "").split('');
+                while(row.length < TAILLE) row.push(' ');
+                plateau.push(row);
+                for(let j=0; j<TAILLE; j++) {
+                  if(plateau[i][j] === '@' || plateau[i][j] === '+') {
+                    ligJoueur = i; colJoueur = j;
+                  }
+                }
+              }
+            }
+
+            function gagne() {
+              for(let i=0; i<TAILLE; i++) {
+                for(let j=0; j<TAILLE; j++) {
+                  if(plateau[i][j] === '$') return false;
+                }
+              }
+              return true;
+            }
+
+            function renderAuto() {
+              let out = "=== SOKOBAN V4 (REPLAY) ===\n";
+              out += "Partie: " + currentLevelFile + " | Fichier: opt.dep\n";
+              out += "Progression: " + autoIndex + " / " + depSequence.length + " | Zoom: x" + zoom + "\n";
+              out += "--------------------------------------------------\n";
+              for(let i=0; i<TAILLE; i++) {
+                for(let v=0; v<zoom; v++) {
+                  for(let j=0; j<TAILLE; j++) {
+                    let c = plateau[i][j];
+                    for(let h=0; h<zoom; h++) {
+                        out += c;
+                    }
+                  }
+                  out += "\n";
+                }
+              }
+              terminal.innerHTML = out;
+            }
+
+            function stepAuto() {
+              if (gagne() || autoIndex >= depSequence.length) {
+                clearInterval(autoInterval);
+                autoInterval = null;
+                isPlaying = false;
+                renderAuto();
+                terminal.innerHTML += "\n--------------------------------------------------\n";
+                if(gagne()) {
+                  terminal.innerHTML += "SOLUTION VALIDE (Gagne en " + autoIndex + " coups).\n";
+                } else {
+                  terminal.innerHTML += "ECHEC : Partie perdue.\n";
+                }
+                terminal.innerHTML += "--------------------------------------------------\n";
+                return;
+              }
+
+              let coup = depSequence[autoIndex];
+              let cl = coup.toLowerCase();
+              let dy=0, dx=0;
+              switch(cl) {
+                case 'z': case 'h': dy=-1; break;
+                case 's': case 'b': dy=1; break;
+                case 'q': case 'g': dx=-1; break;
+                case 'd': dx=1; break;
+              }
+
+              if(dy!==0 || dx!==0) {
+                let y = ligJoueur, x = colJoueur;
+                let ny = y + dy, nx = x + dx;
+                if(ny>=0 && ny<TAILLE && nx>=0 && nx<TAILLE) {
+                  let actuel = plateau[y][x];
+                  let suiv = plateau[ny][nx];
+
+                  if(suiv === ' ' || suiv === '.') {
+                    plateau[y][x] = (actuel === '+') ? '.' : ' ';
+                    plateau[ny][nx] = (suiv === '.') ? '+' : '@';
+                    ligJoueur = ny; colJoueur = nx;
+                  } else if(suiv === '$' || suiv === '*') {
+                    let py = ny + dy, px = nx + dx;
+                    if(py>=0 && py<TAILLE && px>=0 && px<TAILLE) {
+                      let apres = plateau[py][px];
+                      if(apres === ' ' || apres === '.') {
+                        plateau[py][px] = (apres === '.') ? '*' : '$';
+                        plateau[ny][nx] = (suiv === '*') ? '+' : '@';
+                        plateau[y][x] = (actuel === '+') ? '.' : ' ';
+                        ligJoueur = ny; colJoueur = nx;
+                      }
+                    }
+                  }
+                }
+              }
+              autoIndex++;
+              renderAuto();
+            }
+
+            // Logic to optimize sequence (V4 algorithm)
+            function optimizeSequence(rawSeq, level) {
+              initPartie(level);
+              let hist = [];
+              let positions = [];
+              
+              positions.push({lig: ligJoueur, col: colJoueur, indexHist: 0});
+              
+              for(let i=0; i<rawSeq.length; i++) {
+                let c = rawSeq[i];
+                let cl = c.toLowerCase();
+                let isPush = (c >= 'A' && c <= 'Z');
+                
+                let dy=0, dx=0, code='?';
+                switch(cl) {
+                  case 'z': case 'h': dy=-1; code='h'; break;
+                  case 's': case 'b': dy=1; code='b'; break;
+                  case 'q': case 'g': dx=-1; code='g'; break;
+                  case 'd': dx=1; code='d'; break;
+                }
+                
+                if(code === '?') continue; // ignore random chars
+
+                let y = ligJoueur, x = colJoueur;
+                let ny = y + dy, nx = x + dx;
+                if(ny<0 || ny>=TAILLE || nx<0 || nx>=TAILLE) continue;
+
+                let suiv = plateau[ny][nx];
+
+                if(isPush) {
+                  if(suiv === '$' || suiv === '*') {
+                    let py = ny + dy, px = nx + dx;
+                    if(py>=0 && py<TAILLE && px>=0 && px<TAILLE) {
+                      let apres = plateau[py][px];
+                      if(apres === ' ' || apres === '.') {
+                        plateau[py][px] = (apres === '.') ? '*' : '$';
+                        plateau[ny][nx] = (suiv === '*') ? '+' : '@';
+                        plateau[y][x] = (plateau[y][x] === '+') ? '.' : ' ';
+                        ligJoueur = ny; colJoueur = nx;
+                        
+                        hist.push(code.toUpperCase());
+                        
+                        // Reset positions after a push
+                        positions = [];
+                        positions.push({lig: ny, col: nx, indexHist: hist.length});
+                      }
+                    }
+                  }
+                } else {
+                  if(suiv === ' ' || suiv === '.') {
+                    plateau[y][x] = (plateau[y][x] === '+') ? '.' : ' ';
+                    plateau[ny][nx] = (suiv === '.') ? '+' : '@';
+                    ligJoueur = ny; colJoueur = nx;
+                    
+                    hist.push(code);
+                    
+                    // check loop
+                    let foundLoop = -1;
+                    for(let p=0; p<positions.length; p++) {
+                      if(positions[p].lig === ny && positions[p].col === nx) {
+                        foundLoop = p;
+                        break;
+                      }
+                    }
+                    
+                    if(foundLoop !== -1) {
+                      let targetLength = positions[foundLoop].indexHist;
+                      hist = hist.slice(0, targetLength);
+                      positions = positions.slice(0, foundLoop + 1);
+                    } else {
+                      positions.push({lig: ny, col: nx, indexHist: hist.length});
+                    }
+                  }
+                }
+              }
+              return hist.join('');
+            }
+
+            rawInput.addEventListener('input', () => {
+              statsRaw.innerText = rawInput.value.trim().length + " caractères";
+              optOutput.value = "";
+              statsOpt.innerText = "- caractères";
+              btnPlay.style.display = 'none';
+              overlay.style.display = 'flex';
+              overlay.innerHTML = '<div style="font-size:3rem; margin-bottom:10px;">⏳</div><div style="font-weight:bold;">En attente d\'optimisation...</div>';
+            });
+
+            document.querySelectorAll('.btn-preset-v4').forEach(btn => {
+              btn.addEventListener('click', (e) => {
+                rawInput.value = e.target.getAttribute('data-seq');
+                statsRaw.innerText = rawInput.value.length + " caractères";
+                optOutput.value = "";
+                statsOpt.innerText = "- caractères";
+                btnPlay.style.display = 'none';
+                overlay.style.display = 'flex';
+                overlay.innerHTML = '<div style="font-size:3rem; margin-bottom:10px;">⏳</div><div style="font-weight:bold;">En attente d\'optimisation...</div>';
+              });
+            });
+
+            btnOptimize.addEventListener('click', () => {
+              let raw = rawInput.value.trim();
+              if(!raw) return;
+              
+              let opt = optimizeSequence(raw, levelSelect.value);
+              optOutput.value = opt;
+              
+              let gain = raw.length - opt.length;
+              let perc = raw.length > 0 ? Math.round((gain / raw.length) * 100) : 0;
+              statsOpt.innerText = opt.length + " caractères (-" + perc + "%)";
+              
+              btnPlay.style.display = 'inline-block';
+              btnPlay.classList.add('pulse');
+              setTimeout(() => btnPlay.classList.remove('pulse'), 2000);
+            });
+
+            btnPlay.addEventListener('click', () => {
+              if(isPlaying) return;
+              isPlaying = true;
+              
+              depSequence = optOutput.value;
+              autoIndex = 0;
+              zoom = 1;
+              initPartie(levelSelect.value);
+              overlay.style.display = 'none';
+              renderAuto();
+              
+              if(autoInterval) clearInterval(autoInterval);
+              setTimeout(() => {
+                autoInterval = setInterval(stepAuto, 250);
+              }, 800);
+            });
+
+            showInit();
+            function showInit() {
+              terminal.innerHTML = "=== SOKOBAN V4 ===\n\n(En attente d\'optimisation...)";
+            }
+          });
+        </script>
+
+
+<h2 class="text-gradient mt-6 mb-4 text-center">📂 Ressources de la Version 4</h2>
+      
+      <div class="resources-glass-container">
+        <!-- Navigation Buttons -->
+        <div class="glass-tabs">
+          <button class="glass-tab" data-target="res-code-v4">
+            <span class="tab-icon">💻</span>
+            <span class="tab-text">Code V4</span>
+          </button>
+          <button class="glass-tab" data-target="res-consignes-v4">
+            <span class="tab-icon">📄</span>
+            <span class="tab-text">Sujet V4</span>
+          </button>
+        </div>
+
+        <!-- Content Areas -->
+        <div class="glass-content-area">
+          <div id="res-code-v4" class="glass-pane">
+            <h3 class="mt-0 mb-3 text-gradient">Code source (Sokoban_V4.c)</h3>
+            <div class="code-scroll">
+              <pre><code class="language-c">/**
+ * @file Sokoban1.02.c
+ * @brief Projet Sokoban SAE 1.02
+ * @author Leny Langon &amp; Timoté Le Plapous
+ * @version 1
+ * @date 13-12-2025
+ */
+
+#include &lt;ctype.h&gt; // toupper/tolower
+#include &lt;fcntl.h&gt; // kbhit
+#include &lt;stdbool.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;termios.h&gt; // kbhit
+#include &lt;unistd.h&gt;  // usleep
+
+/* --- CONSTANTES --- */
+#define TAILLE_MAX 50
+#define MAX_HISTORIQUE 1000
+
+/* --- VARIABLES GLOBALES pour la taille de la grille --- */
+int gHauteur = 0; // Nombre de lignes de la grille
+int gLargeur = 0; // Nombre de colonnes de la grille
+
+/* Symboles */
+#define SYM_MUR &#x27;#&#x27;
+#define SYM_VIDE &#x27; &#x27;
+#define SYM_CIBLE &#x27;.&#x27;
+#define SYM_CAISSE &#x27;$&#x27;
+#define SYM_CAISSE_SUR_CIBLE &#x27;*&#x27;
+#define SYM_SOKOBAN &#x27;@&#x27;
+#define SYM_SOKOBAN_SUR_CIBLE &#x27;+&#x27;
+
+/* Touches Manuel */
+#define TOUCHE_HAUT &#x27;z&#x27;
+#define TOUCHE_BAS &#x27;s&#x27;
+#define TOUCHE_GAUCHE &#x27;q&#x27;
+#define TOUCHE_DROITE &#x27;d&#x27;
+#define TOUCHE_ZOOM_PLUS &#x27;+&#x27;
+#define TOUCHE_ZOOM_MOINS &#x27;-&#x27;
+#define TOUCHE_ANNULER &#x27;u&#x27;
+#define TOUCHE_ABANDON &#x27;x&#x27;
+#define TOUCHE_RECOMMENCER &#x27;r&#x27;
+
+/* --- TYPES --- */
+typedef char t_plateau[TAILLE_MAX][TAILLE_MAX];
+typedef char t_tabDeplacement[MAX_HISTORIQUE];
+
+/* Structure pour mémoriser une position avec l&#x27;index dans l&#x27;historique */
+typedef struct {
+  int lig;
+  int col;
+  int indexHist; // Index dans l&#x27;historique quand on était à cette position
+} t_positionHist;
+
+typedef t_positionHist t_tabPositions[MAX_HISTORIQUE];
+
+/* --- PROTOTYPES --- */
+int kbhit(void);
+void chargerPartie(t_plateau plateau, char fichier[]);
+void enregistrerPartie(t_plateau plateau, char fichier[]);
+void chargerDeplacements(t_tabDeplacement t, char fichier[], int *nb);
+void enregistrerDeplacements(t_tabDeplacement t, int nb, char fic[]);
+
+void afficher_entete_manuel(char fichier[], int nbCoups, int zoom);
+void afficher_entete_auto(char ficSok[], char ficDep[], int coupActuel,
+                          int nbTotal, int zoom);
+void afficher_plateau(t_plateau plateau, int zoom);
+bool gagne(t_plateau plateau);
+void position_joueur(t_plateau plateau, int *lig, int *col);
+void deplacer(t_plateau plateau, int *lig, int *col, char direction,
+              int *nbCoups, t_tabDeplacement hist, bool mode_auto);
+void deplacer_auto(t_plateau plateau, int *lig, int *col, char direction,
+                   int *nbCoups, t_tabDeplacement hist, bool estPoussee,
+                   t_tabPositions positions, int *nbPositions,
+                   int *dernierePousseIndex);
+void annuler_coup(t_plateau plateau, t_tabDeplacement hist, int *nbCoups,
+                  int *lig, int *col);
+
+void lancer_mode_manuel();
+void lancer_mode_autonome();
+
+/* ------------------------------------------------------------------------- */
+/*                                   MAIN                                    */
+/* ------------------------------------------------------------------------- */
+
+int main(void) {
+  int choix = 0;
+
+  // Afficher l&#x27;interface de menu
+  printf(&quot;\033[H\033[J&quot;);
+  printf(&quot;=== SUPER SOKOBAN ===\n&quot;);
+  printf(&quot;1. Mode Manuel (Jouer au clavier)\n&quot;);
+  printf(&quot;2. Mode Autonome (Lire un fichier .dep)\n&quot;);
+  printf(&quot;Votre choix : &quot;);
+  scanf(&quot;%d&quot;, &amp;choix);
+
+  if (choix == 1) {
+    lancer_mode_manuel();
+  } else if (choix == 2) {
+    lancer_mode_autonome();
+  } else {
+    printf(&quot;Choix invalide.\n&quot;);
+  }
+
+  return EXIT_SUCCESS;
+}
+
+/* ------------------------------------------------------------------------- */
+/*                             MODE AUTONOME                                 */
+/* ------------------------------------------------------------------------- */
+
+/* Fonction pour calculer le nombre de coups optimisés à partir de l&#x27;historique
+   L&#x27;optimisation des déplacements nets ne s&#x27;applique que s&#x27;il y a une seule poussée */
+int calculerCoupsOptimises(t_tabDeplacement hist, int nbCoups) {
+  int nbPoussees = 0;
+  int i;
+  char c;
+
+  // Compter le nombre de poussées
+  for (i = 0; i &lt; nbCoups; i++) {
+    if (isupper(hist[i]))
+      nbPoussees++;
+  }
+
+  // Si plus d&#x27;une poussée, pas d&#x27;optimisation des déplacements nets
+  if (nbPoussees &gt; 1) {
+    return nbCoups;
+  }
+
+  // Une seule poussée (ou zéro) : appliquer l&#x27;optimisation des déplacements nets
+  int total = 0;
+  int cptHaut = 0, cptBas = 0, cptGauche = 0, cptDroite = 0;
+
+  for (i = 0; i &lt; nbCoups; i++) {
+    c = hist[i];
+    if (isupper(c)) {
+      // C&#x27;est une poussée - calculer les déplacements nets du segment actuel
+      int netsV = (cptHaut &gt; cptBas) ? (cptHaut - cptBas) : (cptBas - cptHaut);
+      int netsH = (cptDroite &gt; cptGauche) ? (cptDroite - cptGauche) : (cptGauche - cptDroite);
+      total += netsV + netsH + 1; // +1 pour la poussée
+      // Réinitialiser les compteurs
+      cptHaut = 0;
+      cptBas = 0;
+      cptGauche = 0;
+      cptDroite = 0;
+    } else {
+      // Déplacement simple
+      if (c == &#x27;h&#x27;)
+        cptHaut++;
+      else if (c == &#x27;b&#x27;)
+        cptBas++;
+      else if (c == &#x27;g&#x27;)
+        cptGauche++;
+      else if (c == &#x27;d&#x27;)
+        cptDroite++;
+    }
+  }
+  // Ajouter les déplacements nets du dernier segment (après la dernière poussée)
+  int netsV = (cptHaut &gt; cptBas) ? (cptHaut - cptBas) : (cptBas - cptHaut);
+  int netsH = (cptDroite &gt; cptGauche) ? (cptDroite - cptGauche) : (cptGauche - cptDroite);
+  total += netsV + netsH;
+
+  return total;
+}
+
+void lancer_mode_autonome() {
+  t_plateau plateau;
+  t_tabDeplacement listeCoups;
+  t_tabDeplacement historique; // Historique des coups réellement effectués
+  t_tabPositions positions;    // Historique des positions pour optimisation
+  char nomFichierSok[50];
+  char nomFichierDep[50];
+  int nbCoupsTotal = 0;
+  int nbCoupsJoues = 0; // Nombre de coups dans l&#x27;historique (après undo)
+  int nbPositions = 0;  // Nombre de positions mémorisées
+  int dernierePousseIndex = -1; // Index du dernier coup de poussée
+  int i;
+  int ligJoueur, colJoueur;
+  int zoom = 1;
+  bool victoire = false;
+  char coup;
+  bool estPoussee;
+
+  printf(&quot;Nom du fichier partie (.sok) : &quot;);
+  scanf(&quot;%s&quot;, nomFichierSok);
+  printf(&quot;Nom du fichier deplacements (.dep) : &quot;);
+  scanf(&quot;%s&quot;, nomFichierDep);
+
+  chargerPartie(plateau, nomFichierSok);
+  chargerDeplacements(listeCoups, nomFichierDep, &amp;nbCoupsTotal);
+  position_joueur(plateau, &amp;ligJoueur, &amp;colJoueur);
+
+  // Mémoriser la position initiale
+  positions[0].lig = ligJoueur;
+  positions[0].col = colJoueur;
+  positions[0].indexHist = 0;
+  nbPositions = 1;
+
+  // Vérifier si la partie est déjà gagnée au départ
+  if (gagne(plateau)) {
+    afficher_entete_auto(nomFichierSok, nomFichierDep, 0, nbCoupsTotal, zoom);
+    afficher_plateau(plateau, zoom);
+    printf(&quot;\n--------------------------------------------------\n&quot;);
+    printf(&quot;SOLUTION VALIDE (Gagne en 0 coups).\n&quot;);
+    printf(&quot;--------------------------------------------------\n&quot;);
+    return;
+  }
+
+  afficher_entete_auto(nomFichierSok, nomFichierDep, 0, nbCoupsTotal, zoom);
+  afficher_plateau(plateau, zoom);
+  usleep(1000000); // Pause 1s avant départ
+
+  for (i = 0; i &lt; nbCoupsTotal; i++) {
+    if (gagne(plateau)) {
+      victoire = true;
+      break; // Arrêt si gagné avant la fin
+    }
+
+    coup = listeCoups[i];
+
+    if (coup == &#x27;+&#x27;) {
+      if (zoom &lt; 3)
+        zoom++;
+    } else if (coup == &#x27;-&#x27;) {
+      if (zoom &gt; 1)
+        zoom--;
+    } else if (tolower(coup) == &#x27;u&#x27;) {
+      // Annuler en utilisant l&#x27;historique des coups réellement effectués
+      annuler_coup(plateau, historique, &amp;nbCoupsJoues, &amp;ligJoueur, &amp;colJoueur);
+    } else {
+      // Vérifier si c&#x27;est une poussée demandée (majuscule)
+      estPoussee = isupper(coup);
+      // Effectuer le déplacement et enregistrer dans l&#x27;historique
+      deplacer_auto(plateau, &amp;ligJoueur, &amp;colJoueur, coup, &amp;nbCoupsJoues,
+                    historique, estPoussee, positions, &amp;nbPositions,
+                    &amp;dernierePousseIndex);
+    }
+
+    afficher_entete_auto(nomFichierSok, nomFichierDep, i + 1, nbCoupsTotal,
+                         zoom);
+    afficher_plateau(plateau, zoom);
+    usleep(250000); // Pause 0.25s entre les mouvements
+  }
+
+  /* --- Fin de la boucle de jeu --- */
+
+  /* Si on n&#x27;a pas détecté de victoire dans la boucle, on vérifie une dernière
+   * fois */
+  if (!victoire) {
+    victoire = gagne(plateau);
+  }
+
+  printf(&quot;\n--------------------------------------------------\n&quot;);
+
+  /* Calculer le nombre de coups optimisés :
+     - L&#x27;historique a déjà été nettoyé des boucles par deplacer_auto
+     - calculerCoupsOptimises calcule ensuite les déplacements nets par segment */
+  int coupsOptimises = calculerCoupsOptimises(historique, nbCoupsJoues);
+
+  if (victoire) {
+    printf(&quot;SOLUTION VALIDE (Gagne en %d coups).\n&quot;, coupsOptimises);
+  } else {
+    /* Partie non gagnée */
+    if (coupsOptimises &gt; 0) {
+      printf(&quot;Partie non gagnée. Coups effectués: %d\n&quot;, coupsOptimises);
+    } else {
+      printf(&quot;ECHEC : Partie perdue avec cette liste de coups.\n&quot;);
+    }
+  }
+
+  printf(&quot;--------------------------------------------------\n&quot;);
+}
+
+/* ------------------------------------------------------------------------- */
+/*                              MODE MANUEL                                  */
+/* ------------------------------------------------------------------------- */
+
+void lancer_mode_manuel() {
+  t_plateau plateau;
+  t_tabDeplacement historique;
+  char nomFichier[50];
+  char nomSauv[50];
+  char touche = &#x27;\0&#x27;;
+  int ligJoueur, colJoueur;
+  int nbCoups = 0;
+  int zoom = 1;
+  char rep;
+
+  printf(&quot;Nom du fichier .sok : &quot;);
+  scanf(&quot;%s&quot;, nomFichier);
+
+  chargerPartie(plateau, nomFichier);
+  position_joueur(plateau, &amp;ligJoueur, &amp;colJoueur);
+
+  while (touche != TOUCHE_ABANDON &amp;&amp; !gagne(plateau)) {
+    afficher_entete_manuel(nomFichier, nbCoups, zoom);
+    afficher_plateau(plateau, zoom);
+
+    while (!kbhit()) {
+      usleep(10000);
+    }
+    touche = getchar();
+
+    switch (touche) {
+    case TOUCHE_RECOMMENCER:
+      chargerPartie(plateau, nomFichier);
+      position_joueur(plateau, &amp;ligJoueur, &amp;colJoueur);
+      nbCoups = 0;
+      break;
+    case TOUCHE_ZOOM_PLUS:
+      if (zoom &lt; 3)
+        zoom++;
+      break;
+    case TOUCHE_ZOOM_MOINS:
+      if (zoom &gt; 1)
+        zoom--;
+      break;
+    case TOUCHE_ANNULER:
+      annuler_coup(plateau, historique, &amp;nbCoups, &amp;ligJoueur, &amp;colJoueur);
+      break;
+    case TOUCHE_ABANDON:
+      break;
+    default:
+      // false = mode manuel, on enregistre le coup dans l&#x27;historique
+      deplacer(plateau, &amp;ligJoueur, &amp;colJoueur, touche, &amp;nbCoups, historique,
+               false);
+      break;
+    }
+  }
+
+  afficher_entete_manuel(nomFichier, nbCoups, zoom);
+  afficher_plateau(plateau, zoom);
+
+  if (gagne(plateau))
+    printf(&quot;\nBRAVO ! GAGNE !\n&quot;);
+  else
+    printf(&quot;\nABANDON.\n&quot;);
+
+  // Sauvegarde Historique (Consigne SAE 1.01V2)
+  printf(&quot;Sauvegarder l&#x27;historique (.dep) ? (o/n) : &quot;);
+  while (kbhit())
+    getchar();
+  scanf(&quot; %c&quot;, &amp;rep);
+  if (rep == &#x27;o&#x27; || rep == &#x27;O&#x27;) {
+    printf(&quot;Nom fichier : &quot;);
+    scanf(&quot;%s&quot;, nomSauv);
+    enregistrerDeplacements(historique, nbCoups, nomSauv);
+  }
+}
+
+/* ------------------------------------------------------------------------- */
+/*                           fonctions communes                              */
+/* ------------------------------------------------------------------------- */
+
+void afficher_entete_manuel(char fichier[], int nbCoups, int zoom) {
+  printf(&quot;\033[H\033[J&quot;);
+  printf(&quot;--- MODE MANUEL ---\n&quot;);
+  printf(&quot;Fichier: %s | Coups: %d | Zoom: x%d\n&quot;, fichier, nbCoups, zoom);
+  printf(
+      &quot;Touches: ZQSD (bouger), +/- (zoom), U (undo), R (reset), X (quitter)\n&quot;);
+  printf(&quot;--------------------------------------------------\n&quot;);
+}
+
+void afficher_entete_auto(char ficSok[], char ficDep[], int coupActuel,
+                          int nbTotal, int zoom) {
+  printf(&quot;\033[H\033[J&quot;);
+  printf(&quot;--- MODE AUTONOME ---\n&quot;);
+  printf(&quot;Partie: %s | Deplacements: %s\n&quot;, ficSok, ficDep);
+  printf(&quot;Progression: %d / %d | Zoom: x%d\n&quot;, coupActuel, nbTotal, zoom);
+  printf(&quot;--------------------------------------------------\n&quot;);
+}
+
+void afficher_plateau(t_plateau plateau, int zoom) {
+  int i, j, v, h;
+  char c, sym;
+  for (i = 0; i &lt; gHauteur; i++) {
+    for (v = 0; v &lt; zoom; v++) {
+      for (j = 0; j &lt; gLargeur; j++) {
+        c = plateau[i][j];
+        sym = SYM_VIDE;
+        if (c == SYM_MUR)
+          sym = SYM_MUR;
+        else if (c == SYM_CIBLE)
+          sym = SYM_CIBLE;
+        else if (c == SYM_CAISSE || c == SYM_CAISSE_SUR_CIBLE)
+          sym = SYM_CAISSE;
+        else if (c == SYM_SOKOBAN || c == SYM_SOKOBAN_SUR_CIBLE)
+          sym = SYM_SOKOBAN;
+        for (h = 0; h &lt; zoom; h++)
+          printf(&quot;%c&quot;, sym);
+      }
+      printf(&quot;\n&quot;);
+    }
+  }
+}
+
+bool gagne(t_plateau plateau) {
+  int i, j;
+  for (i = 0; i &lt; gHauteur; i++)
+    for (j = 0; j &lt; gLargeur; j++)
+      if (plateau[i][j] == SYM_CAISSE)
+        return false;
+  return true;
+}
+
+void position_joueur(t_plateau plateau, int *lig, int *col) {
+  int i, j;
+  for (i = 0; i &lt; gHauteur; i++)
+    for (j = 0; j &lt; gLargeur; j++)
+      if (plateau[i][j] == SYM_SOKOBAN ||
+          plateau[i][j] == SYM_SOKOBAN_SUR_CIBLE) {
+        *lig = i;
+        *col = j;
+        return;
+      }
+}
+
+void deplacer(t_plateau plateau, int *lig, int *col, char direction,
+              int *nbCoups, t_tabDeplacement hist, bool mode_auto) {
+  int dY = 0, dX = 0;
+  int y = *lig, x = *col;
+  int nY, nX, pY, pX;
+  char code = &#x27;?&#x27;;
+  char *actuel, *suiv, *apres;
+
+  // Switch des deplacements
+  switch (tolower(direction)) {
+  case &#x27;z&#x27;:
+  case &#x27;h&#x27;:
+    dY = -1;
+    code = &#x27;h&#x27;;
+    break;
+  case &#x27;s&#x27;:
+  case &#x27;b&#x27;:
+    dY = 1;
+    code = &#x27;b&#x27;;
+    break;
+  case &#x27;q&#x27;:
+  case &#x27;g&#x27;:
+    dX = -1;
+    code = &#x27;g&#x27;;
+    break;
+  case &#x27;d&#x27;:
+    dX = 1;
+    code = &#x27;d&#x27;;
+    break;
+  }
+  if (dY == 0 &amp;&amp; dX == 0)
+    return;
+
+  nY = y + dY;
+  nX = x + dX;
+  if (nY &lt; 0 || nY &gt;= gHauteur || nX &lt; 0 || nX &gt;= gLargeur)
+    return;
+
+  actuel = &amp;plateau[y][x];
+  suiv = &amp;plateau[nY][nX];
+
+  // Mouvement Simple
+  if (*suiv == SYM_VIDE || *suiv == SYM_CIBLE) {
+    *actuel = (*actuel == SYM_SOKOBAN_SUR_CIBLE) ? SYM_CIBLE : SYM_VIDE;
+    *suiv = (*suiv == SYM_CIBLE) ? SYM_SOKOBAN_SUR_CIBLE : SYM_SOKOBAN;
+    *lig = nY;
+    *col = nX;
+
+    // En mode manuel, on enregistre. En auto, on ne fait rien (l&#x27;historique est
+    // déjà écrit)
+    if (!mode_auto &amp;&amp; *nbCoups &lt; MAX_HISTORIQUE)
+      hist[(*nbCoups)++] = code;
+  }
+  // Poussée
+  else if (*suiv == SYM_CAISSE || *suiv == SYM_CAISSE_SUR_CIBLE) {
+    pY = nY + dY;
+    pX = nX + dX;
+    if (pY &gt;= 0 &amp;&amp; pY &lt; gHauteur &amp;&amp; pX &gt;= 0 &amp;&amp; pX &lt; gLargeur) {
+      apres = &amp;plateau[pY][pX];
+      if (*apres == SYM_VIDE || *apres == SYM_CIBLE) {
+        *apres = (*apres == SYM_CIBLE) ? SYM_CAISSE_SUR_CIBLE : SYM_CAISSE;
+        *suiv = (*suiv == SYM_CAISSE_SUR_CIBLE) ? SYM_SOKOBAN_SUR_CIBLE
+                                                : SYM_SOKOBAN;
+        *actuel = (*actuel == SYM_SOKOBAN_SUR_CIBLE) ? SYM_CIBLE : SYM_VIDE;
+        *lig = nY;
+        *col = nX;
+
+        if (!mode_auto &amp;&amp; *nbCoups &lt; MAX_HISTORIQUE)
+          hist[(*nbCoups)++] = toupper(code);
+      }
+    }
+  }
+}
+
+void deplacer_auto(t_plateau plateau, int *lig, int *col, char direction,
+                   int *nbCoups, t_tabDeplacement hist, bool estPoussee,
+                   t_tabPositions positions, int *nbPositions,
+                   int *dernierePousseIndex) {
+  int dY = 0, dX = 0;
+  int y = *lig, x = *col;
+  int nY, nX, pY, pX;
+  char code = &#x27;?&#x27;;
+  char *actuel, *suiv, *apres;
+  int i;
+
+  // Switch des deplacements
+  switch (tolower(direction)) {
+  case &#x27;z&#x27;:
+  case &#x27;h&#x27;:
+    dY = -1;
+    code = &#x27;h&#x27;;
+    break;
+  case &#x27;s&#x27;:
+  case &#x27;b&#x27;:
+    dY = 1;
+    code = &#x27;b&#x27;;
+    break;
+  case &#x27;q&#x27;:
+  case &#x27;g&#x27;:
+    dX = -1;
+    code = &#x27;g&#x27;;
+    break;
+  case &#x27;d&#x27;:
+    dX = 1;
+    code = &#x27;d&#x27;;
+    break;
+  }
+  if (dY == 0 &amp;&amp; dX == 0)
+    return;
+
+  nY = y + dY;
+  nX = x + dX;
+  if (nY &lt; 0 || nY &gt;= gHauteur || nX &lt; 0 || nX &gt;= gLargeur)
+    return;
+
+  actuel = &amp;plateau[y][x];
+  suiv = &amp;plateau[nY][nX];
+
+  // Si c&#x27;est une poussée demandée (majuscule), on doit pousser une caisse
+  if (estPoussee) {
+    if (*suiv == SYM_CAISSE || *suiv == SYM_CAISSE_SUR_CIBLE) {
+      pY = nY + dY;
+      pX = nX + dX;
+      if (pY &gt;= 0 &amp;&amp; pY &lt; gHauteur &amp;&amp; pX &gt;= 0 &amp;&amp; pX &lt; gLargeur) {
+        apres = &amp;plateau[pY][pX];
+        if (*apres == SYM_VIDE || *apres == SYM_CIBLE) {
+          *apres = (*apres == SYM_CIBLE) ? SYM_CAISSE_SUR_CIBLE : SYM_CAISSE;
+          *suiv = (*suiv == SYM_CAISSE_SUR_CIBLE) ? SYM_SOKOBAN_SUR_CIBLE
+                                                  : SYM_SOKOBAN;
+          *actuel = (*actuel == SYM_SOKOBAN_SUR_CIBLE) ? SYM_CIBLE : SYM_VIDE;
+          *lig = nY;
+          *col = nX;
+
+          if (*nbCoups &lt; MAX_HISTORIQUE)
+            hist[(*nbCoups)++] = toupper(code);
+
+          // Après une poussée, on réinitialise les positions car on ne peut
+          // plus optimiser les mouvements précédents
+          *dernierePousseIndex = *nbCoups;
+          positions[0].lig = nY;
+          positions[0].col = nX;
+          positions[0].indexHist = *nbCoups;
+          *nbPositions = 1;
+        }
+      }
+    }
+    // Si pas de caisse à pousser, le coup est ignoré
+  } else {
+    // Mouvement simple (minuscule) - ne doit pas pousser de caisse
+    if (*suiv == SYM_VIDE || *suiv == SYM_CIBLE) {
+      *actuel = (*actuel == SYM_SOKOBAN_SUR_CIBLE) ? SYM_CIBLE : SYM_VIDE;
+      *suiv = (*suiv == SYM_CIBLE) ? SYM_SOKOBAN_SUR_CIBLE : SYM_SOKOBAN;
+      *lig = nY;
+      *col = nX;
+
+      if (*nbCoups &lt; MAX_HISTORIQUE)
+        hist[(*nbCoups)++] = code;
+
+      // Vérifier si on est déjà passé par cette position (optimisation)
+      for (i = 0; i &lt; *nbPositions; i++) {
+        if (positions[i].lig == nY &amp;&amp; positions[i].col == nX) {
+          // On est revenu à une position déjà visitée !
+          // On annule tous les coups depuis cette position
+          *nbCoups = positions[i].indexHist;
+          *nbPositions = i + 1; // On garde les positions jusqu&#x27;à celle-ci
+          return;
+        }
+      }
+
+      // Mémoriser la nouvelle position
+      if (*nbPositions &lt; MAX_HISTORIQUE) {
+        positions[*nbPositions].lig = nY;
+        positions[*nbPositions].col = nX;
+        positions[*nbPositions].indexHist = *nbCoups;
+        (*nbPositions)++;
+      }
+    }
+    // Si c&#x27;est une caisse ou un mur, le coup est ignoré
+  }
+}
+
+void annuler_coup(t_plateau plateau, t_tabDeplacement hist, int *nbCoups,
+                  int *lig, int *col) {
+  // Note: cette fonction marche pour le mode manuel.
+  // Pour le mode auto, il faudrait lui passer le coup exact à annuler car hist
+  // n&#x27;est pas utilisé pareil.
+  if (*nbCoups &lt;= 0)
+    return;
+  char coup = hist[*nbCoups - 1];
+  int dY = 0, dX = 0, y = *lig, x = *col, pY, pX, cY, cX;
+
+  switch (tolower(coup)) {
+  case &#x27;h&#x27;:
+    dY = 1;
+    break;
+  case &#x27;b&#x27;:
+    dY = -1;
+    break;
+  case &#x27;g&#x27;:
+    dX = 1;
+    break;
+  case &#x27;d&#x27;:
+    dX = -1;
+    break;
+  }
+  pY = y + dY;
+  pX = x + dX;
+
+  // Retour Sokoban
+  plateau[pY][pX] =
+      (plateau[pY][pX] == SYM_CIBLE) ? SYM_SOKOBAN_SUR_CIBLE : SYM_SOKOBAN;
+  plateau[y][x] =
+      (plateau[y][x] == SYM_SOKOBAN_SUR_CIBLE) ? SYM_CIBLE : SYM_VIDE;
+
+  // Retour Caisse (si majuscule car signifie poussée)
+  if (isupper(coup)) {
+    cY = y - dY;
+    cX = x - dX; // Position actuelle caisse (devant)
+    // On la remet sur la case (y,x) que le joueur vient de libérer
+    plateau[cY][cX] =
+        (plateau[cY][cX] == SYM_CAISSE_SUR_CIBLE) ? SYM_CIBLE : SYM_VIDE;
+    plateau[y][x] =
+        (plateau[y][x] == SYM_CIBLE) ? SYM_CAISSE_SUR_CIBLE : SYM_CAISSE;
+  }
+  *lig = pY;
+  *col = pX;
+  (*nbCoups)--;
+}
+
+/* --- FONCTIONS FOURNIES --- */
+int kbhit() {
+  struct termios oldt, newt;
+  int ch, oldf;
+  tcgetattr(STDIN_FILENO, &amp;oldt);
+  newt = oldt;
+  newt.c_lflag &amp;= ~(ICANON | ECHO);
+  tcsetattr(STDIN_FILENO, TCSANOW, &amp;newt);
+  oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+  fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+  ch = getchar();
+  tcsetattr(STDIN_FILENO, TCSANOW, &amp;oldt);
+  fcntl(STDIN_FILENO, F_SETFL, oldf);
+  if (ch != EOF) {
+    ungetc(ch, stdin);
+    return 1;
+  }
+  return 0;
+}
+void chargerPartie(t_plateau plateau, char fichier[]) {
+  FILE *f = fopen(fichier, &quot;r&quot;);
+  char c;
+  int ligne = 0, col = 0;
+
+  if (!f) {
+    printf(&quot;ERR FICHIER\n&quot;);
+    exit(1);
+  }
+
+  // Initialiser le plateau avec des espaces
+  for (int i = 0; i &lt; TAILLE_MAX; i++)
+    for (int j = 0; j &lt; TAILLE_MAX; j++)
+      plateau[i][j] = SYM_VIDE;
+
+  // Lire le fichier caractère par caractère pour détecter la taille
+  gHauteur = 0;
+  gLargeur = 0;
+
+  while (fread(&amp;c, 1, 1, f) == 1 &amp;&amp; ligne &lt; TAILLE_MAX) {
+    if (c == &#x27;\n&#x27; || c == &#x27;\r&#x27;) {
+      if (col &gt; 0) { // Ignorer les lignes vides
+        if (col &gt; gLargeur)
+          gLargeur = col;
+        ligne++;
+        col = 0;
+      }
+    } else {
+      if (col &lt; TAILLE_MAX) {
+        plateau[ligne][col] = c;
+        col++;
+      }
+    }
+  }
+  // Gérer la dernière ligne si pas de newline à la fin
+  if (col &gt; 0) {
+    if (col &gt; gLargeur)
+      gLargeur = col;
+    ligne++;
+  }
+  gHauteur = ligne;
+
+  fclose(f);
+}
+void enregistrerPartie(t_plateau plateau, char fichier[]) {
+  FILE *f = fopen(fichier, &quot;w&quot;);
+  char fin = &#x27;\n&#x27;;
+  for (int i = 0; i &lt; gHauteur; i++) {
+    for (int j = 0; j &lt; gLargeur; j++)
+      fwrite(&amp;plateau[i][j], 1, 1, f);
+    fwrite(&amp;fin, 1, 1, f);
+  }
+  fclose(f);
+}
+void chargerDeplacements(t_tabDeplacement t, char fichier[], int *nb) {
+  FILE *f = fopen(fichier, &quot;r&quot;);
+  char c;
+  *nb = 0;
+  if (!f) {
+    printf(&quot;ERR DEP\n&quot;);
+    return;
+  }
+  fread(&amp;c, 1, 1, f);
+  while (!feof(f) &amp;&amp; *nb &lt; MAX_HISTORIQUE) {
+    if (c != &#x27;\n&#x27; &amp;&amp; c != &#x27;\r&#x27;)
+      t[(*nb)++] = c;
+    fread(&amp;c, 1, 1, f);
+  }
+  fclose(f);
+}
+void enregistrerDeplacements(t_tabDeplacement t, int nb, char fic[]) {
+  FILE *f = fopen(fic, &quot;w&quot;);
+  fwrite(t, 1, nb, f);
+  fclose(f);
+}</code></pre>
+            </div>
+            <div class="mt-3 text-right">
+              <a href="Assets/SAE 1.02/Sokoban_V4.c" download class="btn btn-secondary">📥 Télécharger (.c)</a>
+            </div>
+          </div>
+
+          <div id="res-consignes-v4" class="glass-pane">
+            <h3 class="mt-0 mb-3 text-gradient">Consignes (V4)</h3>
+            <iframe src="Assets/SAE 1.02/Consignes%20Version%204.pdf" width="100%" height="600px" style="border:none; border-radius:8px;"></iframe>
+            <div class="mt-3 text-right">
+              <a href="Assets/SAE 1.02/Consignes%20Version%204.pdf" download class="btn btn-secondary">📥 Télécharger (PDF)</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="container text-center">
+      <p class="text-secondary">© 2026 Leny Langon. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Version Switcher Logic
+    document.querySelectorAll('.v-switch').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.v-switch').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.version-content').forEach(c => c.classList.remove('active'));
+        
+        btn.classList.add('active');
+        const targetId = btn.getAttribute('data-v');
+        document.getElementById(targetId).classList.add('active');
+      });
+    });
+
+    // Glass Tabs Logic
+    document.querySelectorAll('.glass-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetId = tab.getAttribute('data-target');
+        const pane = document.getElementById(targetId);
+        
+        if (tab.classList.contains('active')) {
+          // Toggle off
+          tab.classList.remove('active');
+          pane.classList.remove('active');
+        } else {
+          // Turn off others
+          document.querySelectorAll('.glass-tab').forEach(t => {
+            if(t.parentElement === tab.parentElement) {
+              t.classList.remove('active');
+            }
+          });
+          document.querySelectorAll('.glass-pane').forEach(p => {
+            // only hide target panes belonging to this version
+            if (p.id.endsWith('v3') && targetId.endsWith('v3') || p.id.endsWith('v4') && targetId.endsWith('v4')) {
+              p.classList.remove('active');
+            }
+          });
+          
+          // Turn on this one
+          tab.classList.add('active');
+          pane.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

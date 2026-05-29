@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leny Langon | Portfolio BUT Informatique</title>
+  <meta name="description" content="Portfolio de Leny Langon, étudiant en BUT Informatique. Projets et compétences.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Sora:wght@400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Preloader -->
+  <div id="preloader">
+    <div class="name">Leny Langon</div>
+    <div class="counter">0%</div>
+  </div>
+
+  <!-- Global Elements -->
+  <div class="scroll-progress"></div>
+  <div class="noise-overlay"></div>
+  <div class="gradient-mesh">
+    <div class="mesh-blob purple"></div>
+    <div class="mesh-blob cyan"></div>
+    <div class="mesh-blob pink"></div>
+  </div>
+  
+
+
+  <!-- Header -->
+  <header>
+    <a href="index.html" class="logo">[LL]</a>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-link active">Accueil</a>
+      <a href="competences.html" class="nav-link">Compétences</a>
+      <a href="projets.html" class="nav-link">Projets</a>
+      <a href="parcours.html" class="nav-link">Parcours</a>
+      <a href="cv.html" class="nav-link">CV</a>
+
+      <a href="contact.html" class="nav-link">Contact</a>
+      <a href="cv.html" class="btn btn-primary btn-pulse">Télécharger CV</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+      <canvas id="hero-canvas" class="hero-particles"></canvas>
+      <div class="container hero-parallax flex align-center justify-between">
+        <div class="hero-content">
+          <h1 class="hero-title">
+            <span class="line-wrap"><span class="line">Bonjour, je suis</span></span><br>
+            <span class="line-wrap"><span class="line text-gradient">Leny LANGON</span></span>
+          </h1>
+          <div class="hero-role-wrap">
+            <span class="hero-role">Étudiant BUT Informatique</span>
+            <span class="hero-role">Développeur Web</span>
+            <span class="hero-role">Créateur de Solutions IA</span>
+          </div>
+          <div class="mb-4 fade-in-up">
+            <span class="tag c3">● Disponible pour une alternance</span>
+          </div>
+          <div class="flex gap-4 fade-in-up">
+            <a href="projets.html" class="btn btn-primary">Voir mes projets <span class="icon-arrow">→</span></a>
+            <a href="contact.html" class="btn btn-secondary">Me contacter <span class="icon-arrow">→</span></a>
+          </div>
+        </div>
+        <!-- Profile Photo Area placeholder -->
+        <div class="hero-visual fade-in-up" style="width: 400px; height: 500px; border-radius: 20px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); display:flex; align-items:center; justify-content:center;">
+          <span style="color:var(--text-secondary)">[PHOTO FILE]</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+      <div class="container grid-2 align-center">
+        <div class="about-visual fade-in-up tilt-card card" style="height: 400px; display:flex; align-items:center; justify-content:center;">
+          [IMAGE / VISUAL]
+        </div>
+        <div class="about-text fade-in-up">
+          <h2 class="mb-3 scramble-text" data-text="À propos de moi">À propos de moi</h2>
+          <p class="mb-3">
+            Étudiant en 1ère année de BUT Informatique à l'IUT de Lannion, je suis passionné par le développement web, la cybersécurité et l'automatisation. Mon objectif est de concevoir des solutions performantes et innovantes.
+          </p>
+          <p class="mb-4">
+            Actuellement à la recherche d'une <strong>alternance</strong> dans le domaine du <strong>développement, automatisation, base de données ou cybersécurité, web</strong> pour la période de <strong>1 ou 2 ans</strong>.
+          </p>
+          <div class="stats grid-3 mb-4 stagger-cards">
+            <div class="card card-glow">
+              <h3 class="counter-val text-gradient" data-target="6">0</h3>
+              <p>Compétences validées</p>
+            </div>
+            <div class="card card-glow">
+              <h3 class="counter-val text-gradient" data-target="9">0</h3>
+              <p>Projets réalisés</p>
+            </div>
+            <div class="card card-glow">
+              <h3 class="counter-val text-gradient" data-target="9">0</h3>
+              <p>Mois de formation</p>
+            </div>
+          </div>
+          <a href="parcours.html" class="btn btn-secondary">Découvrir mon parcours <span class="icon-arrow">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Competencies Preview -->
+    <section class="competencies">
+      <div class="container">
+        <h2 class="mb-4 text-center fade-in-up">Les 6 Compétences du BUT</h2>
+        <div class="grid-3 stagger-cards mb-4">
+          <a href="competences.html#c1" class="card tilt-card card-glow">
+            <div class="tag c1 mb-2">C1</div>
+            <h3>Réaliser</h3>
+            <p class="text-secondary mt-2">Développement d'applications informatiques.</p>
+          </a>
+          <a href="competences.html#c2" class="card tilt-card card-glow">
+            <div class="tag c2 mb-2">C2</div>
+            <h3>Optimiser</h3>
+            <p class="text-secondary mt-2">Optimisation d'applications informatiques.</p>
+          </a>
+          <a href="competences.html#c3" class="card tilt-card card-glow">
+            <div class="tag c3 mb-2">C3</div>
+            <h3>Administrer</h3>
+            <p class="text-secondary mt-2">Administration de systèmes complexes.</p>
+          </a>
+          <!-- Add remaining C4, C5, C6 -->
+        </div>
+        <div class="text-center fade-in-up">
+          <a href="competences.html" class="btn btn-primary">Voir toutes mes compétences <span class="icon-arrow">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Projects Preview -->
+    <section class="projects">
+      <div class="container">
+        <h2 class="mb-4 text-center fade-in-up">Projets Récents</h2>
+        <div class="grid-3 stagger-cards mb-4">
+          <!-- Project 1 -->
+          <div class="card tilt-card">
+            <div style="height: 200px; background: var(--surface-hover); border-radius: 8px; margin-bottom: 15px;"></div>
+            <h3>[PROJECT NAME]</h3>
+            <div class="mb-2 mt-2">
+              <span class="tag c1">C1</span> <span class="tag c5">C5</span>
+            </div>
+            <p class="text-secondary mb-3">[DESCRIPTION DU PROJET]</p>
+            <a href="projets.html" class="btn btn-secondary">Voir le projet <span class="icon-arrow">→</span></a>
+          </div>
+          <!-- Project 2, 3 placeholders... -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer id="footer">
+    <div class="container grid-2">
+      <div>
+        <h3 class="mb-2">Leny Langon</h3>
+        <p class="text-secondary mb-2">Site réalisé dans le cadre du BUT Informatique — IUT de Lannion</p>
+        <p class="text-secondary">© 2026 Fait avec ❤️ et beaucoup de café</p>
+      </div>
+      <div style="text-align:right;">
+        <a href="https://www.linkedin.com/in/leny-langon" target="_blank" class="btn btn-secondary mb-2">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

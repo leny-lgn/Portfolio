@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Étude de Cas : Jeu Sokoban | Leny Langon</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Sora:wght@400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+    .version-switcher {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 40px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px;
+      border-radius: 30px;
+      width: max-content;
+      margin-left: auto;
+      margin-right: auto;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .v-switch {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: 10px 25px;
+      border-radius: 20px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      outline: none;
+    }
+    .v-switch:hover {
+      color: var(--text-primary);
+    }
+    .v-switch.active {
+      background: var(--accent-primary);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    }
+    .version-content {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+    .version-content.active {
+      display: block;
+    }
+
+    /* --- Glass Tabs UI --- */
+    .resources-glass-container {
+      margin-top: 40px;
+    }
+    .glass-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+    .glass-tab {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+      outline: none;
+    }
+    .glass-tab::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .glass-tab:hover::before {
+      opacity: 1;
+    }
+    .glass-tab:hover {
+      transform: translateY(-8px);
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 15px 35px 0 rgba(99, 102, 241, 0.3);
+    }
+    .glass-tab.active {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 25px rgba(99, 102, 241, 0.4);
+      transform: scale(1.05);
+    }
+    .glass-tab .tab-icon {
+      font-size: 2rem;
+      margin-bottom: 5px;
+      z-index: 1;
+    }
+    .glass-tab .tab-text {
+      font-size: 0.75rem;
+      font-weight: 600;
+      z-index: 1;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .glass-pane {
+      display: none;
+      background: rgba(20, 20, 25, 0.6);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 25px;
+      animation: floatIn 0.5s ease forwards;
+    }
+    .glass-pane.active {
+      display: block;
+    }
+
+    @keyframes floatIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .case-study-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .case-study-content h2 {
+      margin-top: 40px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+    .case-study-content h3 {
+      margin-top: 30px;
+      margin-bottom: 15px;
+      color: var(--accent-secondary);
+    }
+    .case-study-content p {
+      margin-bottom: 15px;
+      color: var(--text-secondary);
+    }
+    .case-study-content ul {
+      margin-bottom: 20px;
+      padding-left: 20px;
+      color: var(--text-secondary);
+    }
+    .case-study-content li {
+      margin-bottom: 10px;
+    }
+    .symbol-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+      background: var(--surface);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .symbol-table th, .symbol-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .symbol-table th {
+      background: var(--surface-hover);
+      color: var(--text-primary);
+    }
+    .symbol-table td {
+      color: var(--text-secondary);
+    }
+    .symbol-table tr:last-child td {
+      border-bottom: none;
+    }
+    .resource-card {
+      background: var(--surface);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all var(--transition-fast);
+    }
+    .resource-card:hover {
+      border-color: var(--accent-primary);
+      transform: translateY(-2px);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      color: var(--accent-secondary);
+      margin-bottom: 30px;
+      font-weight: 600;
+      transition: color var(--transition-fast);
+    }
+    .back-link:hover {
+      color: var(--accent-primary);
+    }
+    .back-link span {
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="scroll-progress"></div>
+  <div class="noise-overlay"></div>
+  <div class="gradient-mesh"><div class="mesh-blob purple"></div></div>
+
+  <header>
+    <a href="index.html" class="logo">[LL]</a>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-link">Accueil</a>
+      <a href="competences.html" class="nav-link">Compétences</a>
+      <a href="projets.html" class="nav-link active">Projets</a>
+      <a href="parcours.html" class="nav-link">Parcours</a>
+      <a href="cv.html" class="nav-link">CV</a>
+
+      <a href="contact.html" class="nav-link">Contact</a>
+    </nav>
+  </header>
+
+  
+  <main style="padding-top: 120px; padding-bottom: 100px;">
+    <div class="container case-study-content fade-in-up">
+      
+      <a href="projets.html" class="back-link"><span>←</span> Retour aux projets</a>
+
+      <h1 class="hero-title text-gradient scramble-text mb-2 text-center" data-text="Jeu Sokoban (SAÉ 1.01)">Jeu Sokoban (SAÉ 1.01)</h1>
+      <div class="mb-4 text-center">
+        <span class="tag c1">C</span>
+        <span class="tag c3">Logique algorithmique</span>
+        <span class="tag c4">Moteur de jeu</span>
+      </div>
+
+      <div class="version-switcher">
+        <button class="v-switch active" data-v="v1">Version 1</button>
+        <button class="v-switch" data-v="v2">Version 2</button>
+      </div>
+
+      <div id="v1" class="version-content active">
+
+      <h2 class="text-gradient">🌟 Introduction</h2>
+      <p>Le Sokoban ("gardien d'entrepôt" en japonais) est un puzzle classique né dans les années 80. L'objectif est simple mais exigeant : un personnage doit pousser des caisses sur des emplacements cibles dans un entrepôt exigu. Ce projet a été réalisé dans le cadre de la SAÉ 1.01 (Système d'Apprentissage et d'Évaluation) lors de mon premier semestre en BUT Informatique à l'IUT de Lannion.</p>
+
+      <h2 class="text-gradient">📍 Situation</h2>
+      <p>Le projet s'inscrit dans un besoin client fictif demandant la création d'une version textuelle (non graphique) du jeu en langage C. L'enjeu était de poser les bases d'un moteur de jeu robuste capable de gérer des grilles de 12×12 cases, tout en respectant des contraintes académiques strictes en matière de structure de code.</p>
+
+      <h2 class="text-gradient">🎯 Task (Mission)</h2>
+      <p>Ma mission consistait à développer la première version fonctionnelle du jeu (V1), incluant les fonctionnalités suivantes :</p>
+      <ul>
+        <li><strong>Gestion de fichiers :</strong> Charger un niveau depuis un fichier <code>.sok</code> et permettre la sauvegarde de l'état actuel en cas d'abandon.</li>
+        <li><strong>Moteur de mouvement :</strong> Implémenter les déplacements du personnage et la logique de poussée des caisses (une seule à la fois, interdiction de tirer).</li>
+        <li><strong>Interface Utilisateur (UI) :</strong> Concevoir un affichage dynamique en console avec un entête d'informations (nom du fichier, compteur de coups, commandes).</li>
+        <li><strong>Respect des contraintes de codage :</strong> Suivre une nomenclature précise (camelCase pour les variables, snake_case pour les fonctions) et limiter la complexité (maximum 80 caractères par ligne, 60 lignes par fonction).</li>
+      </ul>
+
+      <h2 class="text-gradient">🛠️ Action (Mise en œuvre)</h2>
+      <p>J'ai structuré le développement autour d'un type de données personnalisé <code>t_plateau</code>. Voici les piliers techniques de ma solution :</p>
+
+      <h3>1. Logique de Mouvement et de Poussée</h3>
+      <p>Le cœur de l'application repose sur la fonction <code>deplacer</code>. J'ai décomposé cette logique pour plus de clarté :</p>
+      <ul>
+        <li><strong>Calcul de direction :</strong> Une fonction d'aide détermine les coordonnées cibles selon la touche pressée (z, q, s, d).</li>
+        <li><strong>Vérification des collisions :</strong> Avant chaque mouvement, le programme vérifie si la case suivante est un mur, une caisse ou un espace vide.</li>
+        <li><strong>Poussée récursive (simplifiée) :</strong> Si une caisse est devant le joueur, le programme vérifie la case "derrière" la caisse pour autoriser ou non le déplacement.</li>
+      </ul>
+
+      <h3>2. Persistance des Cibles</h3>
+      <p>Un défi technique majeur était que les caisses (<code>$</code>) et le joueur (<code>@</code>) écrasent visuellement les cibles (<code>.</code>) dans le tableau. J'ai résolu cela en implémentant :</p>
+      <ul>
+        <li><code>compter_cibles</code> et <code>position_cibles</code> : Pour mémoriser l'emplacement originel des points de stockage au lancement de la partie.</li>
+        <li><code>actualiser_cibles</code> : Une routine qui restaure les symboles de cibles ou met à jour les symboles combinés (<code>*</code> pour caisse sur cible, <code>+</code> pour joueur sur cible) après chaque mouvement.</li>
+      </ul>
+
+      <h3>3. Expérience Utilisateur (UX)</h3>
+      <p>Pour rendre le jeu plus immersif malgré le mode texte :</p>
+      <ul>
+        <li><strong>Couleurs ANSI :</strong> J'ai utilisé des codes d'échappement pour colorer l'interface (bleu pour les titres, vert pour les succès, rouge pour les bordures).</li>
+        <li><strong>Saisie fluide :</strong> Utilisation de la fonction <code>kbhit()</code> pour permettre une réactivité immédiate sans avoir à presser la touche "Entrée" après chaque direction.</li>
+      </ul>
+
+      <table class="symbol-table">
+        <thead>
+          <tr>
+            <th>Symbole</th>
+            <th>Signification</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>#</code></td><td>Mur</td></tr>
+          <tr><td><code>$</code></td><td>Caisse</td></tr>
+          <tr><td><code>.</code></td><td>Cible</td></tr>
+          <tr><td><code>@</code></td><td>Sokoban (Joueur)</td></tr>
+          <tr><td><code>*</code></td><td>Caisse sur cible</td></tr>
+          <tr><td><code>+</code></td><td>Joueur sur cible</td></tr>
+        </tbody>
+      </table>
+
+      <h2 class="text-gradient">🏆 Result (Résultat)</h2>
+      <p>Le résultat est une application console robuste et fidèle aux règles du jeu original.</p>
+      <ul>
+        <li><strong>Conformité :</strong> Le programme respecte 100% des consignes de la SAÉ, notamment la gestion des 80 caractères par ligne (un exercice de style périlleux pour la lisibilité !).</li>
+        <li><strong>Robustesse :</strong> La gestion des erreurs de fichiers et la possibilité de recommencer la partie (r) ou de sauvegarder à l'abandon (x) offrent une expérience utilisateur complète.</li>
+        <li><strong>Performance :</strong> Le code est modulaire, facilitant l'évolution vers la Version 2 qui prévoit des fonctionnalités plus avancées.</li>
+      </ul>
+
+      <h2 class="text-gradient">💡 Ce que j'ai appris</h2>
+      <p>Ce projet a été ma première réelle confrontation avec la programmation modulaire et la gestion d'états complexes dans un tableau 2D. J'ai appris l'importance de la rigueur dans le nommage et la documentation, car un code "propre" est bien plus facile à déboguer lors des phases de test de collisions.</p>
+
+      
+            <h2 class="text-gradient mt-6 mb-4 text-center">🎮 Simulation Interactive (V1)</h2>
+      <p class="text-center mb-4 text-secondary">Testez le moteur de la Version 1 exactement comme dans le terminal Linux d'origine !</p>
+      
+      <div style="display:flex; justify-content:center; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
+        <button class="btn btn-secondary level-btn" data-level="niveau1.sok" style="padding:5px 15px; font-size:0.8rem;">Niveau 1</button>
+        <button class="btn btn-secondary level-btn" data-level="niveau2.sok" style="padding:5px 15px; font-size:0.8rem;">Niveau 2</button>
+        <button class="btn btn-secondary level-btn" data-level="niveau3.sok" style="padding:5px 15px; font-size:0.8rem;">Niveau 3</button>
+        <button class="btn btn-secondary level-btn" data-level="niveau4.sok" style="padding:5px 15px; font-size:0.8rem;">Niveau 4</button>
+        <button class="btn btn-secondary level-btn" data-level="niveau5.sok" style="padding:5px 15px; font-size:0.8rem;">Niveau 5</button>
+        <button class="btn btn-secondary level-btn" data-level="niveau6.sok" style="padding:5px 15px; font-size:0.8rem;">Niveau 6</button>
+      </div>
+
+      <div class="terminal-emulator-container" style="margin: 0 auto 50px auto; max-width: 600px; background: #0c0c0c; border-radius: 10px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.6); font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #ccc; border: 1px solid #333;">
+        <div style="background: #222; padding: 10px 15px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #333;">
+          <div style="width: 12px; height: 12px; border-radius: 50%; background: #ff5f56;"></div>
+          <div style="width: 12px; height: 12px; border-radius: 50%; background: #ffbd2e;"></div>
+          <div style="width: 12px; height: 12px; border-radius: 50%; background: #27c93f;"></div>
+          <span style="margin-left: auto; margin-right: auto; color: #888; font-size: 12px; transform: translateX(-24px);">leny@iut-lannion: ~/sokoban</span>
+        </div>
+        <div id="sokoban-container" style="position: relative; min-height: 480px; cursor: pointer;">
+          <div id="sokoban-terminal" tabindex="0" style="padding: 20px; outline: none; white-space: pre; line-height: 1.2; min-height: 480px;">
+            <!-- JS will render here -->
+          </div>
+          <div id="sokoban-overlay" style="position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; flex-direction:column; border-radius: 0 0 10px 10px;">
+            <div style="font-size:3rem; margin-bottom:10px;">▶️</div>
+            <div style="font-weight:bold;">Cliquez pour jouer</div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const terminal = document.getElementById('sokoban-terminal');
+          const overlay = document.getElementById('sokoban-overlay');
+          const container = terminal ? terminal.parentElement : null;
+          if(!terminal) return;
+
+          const NIVEAUX = {
+            'niveau1.sok': [
+              '  ####      ',
+              '###  ####   ',
+              '#     $ #   ',
+              '# #  #$ #   ',
+              '# . .#@ #   ',
+              '#########   ',
+              '            ',
+              '            ',
+              '            ',
+              '            ',
+              '            ',
+              '            ',
+            ],
+            'niveau2.sok': [
+              ' #####      ',
+              ' #@  #      ',
+              ' # $$# ###  ',
+              ' # $ # #.#  ',
+              ' ### ###.#  ',
+              '  ##    .#  ',
+              '  #   #  #  ',
+              '  #   ####  ',
+              '  #####     ',
+              '            ',
+              '            ',
+              '            ',
+            ],
+            'niveau3.sok': [
+              ' #####      ',
+              ' #.  ##     ',
+              ' #@$$ #     ',
+              ' ##   #     ',
+              '  ##  #     ',
+              '   ##.#     ',
+              '    ###     ',
+              '            ',
+              '            ',
+              '            ',
+              '            ',
+              '            ',
+            ],
+            'niveau4.sok': [
+              ' ######     ',
+              ' #.  #####  ',
+              ' #.  $...#  ',
+              ' # $#  $##  ',
+              ' #  ## @ #  ',
+              ' #   $ $ #  ',
+              ' ######  #  ',
+              '      ####  ',
+              '            ',
+              '            ',
+              '            ',
+              '            ',
+            ],
+            'niveau5.sok': [
+              ' ####       ',
+              ' #. ##      ',
+              ' #.@ #      ',
+              ' #. $#      ',
+              ' ##$ ###    ',
+              '  # $  #    ',
+              '  #    #    ',
+              '  #  ###    ',
+              '  ####      ',
+              '            ',
+              '            ',
+              '            ',
+            ],
+            'niveau6.sok': [
+              '  #####     ',
+              '###   #     ',
+              '#.@$  #     ',
+              '### $.#     ',
+              '#.##$ #     ',
+              '# # . ##    ',
+              '#$ *$$.#    ',
+              '#   .  #    ',
+              '########    ',
+              '            ',
+              '            ',
+              '            ',
+            ],
+          };
+          
+          const TAILLE = 12;
+          let plateau = [];
+          let currentLevelFile = 'niveau1.sok';
+          let ligJoueur = 0;
+          let colJoueur = 0;
+          let nbCoups = 0;
+          let gameOver = false;
+          let hasFocus = false;
+
+          function initPartie(filename) {
+            currentLevelFile = filename;
+            let NIVEAU = NIVEAUX[filename];
+            plateau = [];
+            nbCoups = 0;
+            gameOver = false;
+            for(let i=0; i<TAILLE; i++) {
+              let row = (NIVEAU[i] || "").split('');
+              while(row.length < TAILLE) row.push(' ');
+              plateau.push(row);
+              for(let j=0; j<TAILLE; j++) {
+                if(plateau[i][j] === '@' || plateau[i][j] === '+') {
+                  ligJoueur = i; colJoueur = j;
+                }
+              }
+            }
+            render();
+          }
+
+          function gagne() {
+            for(let i=0; i<TAILLE; i++) {
+              for(let j=0; j<TAILLE; j++) {
+                if(plateau[i][j] === '$') return false;
+              }
+            }
+            return true;
+          }
+
+          function deplacer(direction) {
+            if(gameOver || !hasFocus) return;
+            let dy=0, dx=0;
+            switch(direction.toLowerCase()) {
+              case 'z': dy=-1; break;
+              case 's': dy=1; break;
+              case 'q': dx=-1; break;
+              case 'd': dx=1; break;
+              default: return;
+            }
+            if(dy===0 && dx===0) return;
+
+            let y = ligJoueur, x = colJoueur;
+            let ny = y + dy, nx = x + dx;
+            if(ny<0 || ny>=TAILLE || nx<0 || nx>=TAILLE) return;
+
+            let actuel = plateau[y][x];
+            let suiv = plateau[ny][nx];
+
+            if(suiv === ' ' || suiv === '.') {
+              plateau[y][x] = (actuel === '+') ? '.' : ' ';
+              plateau[ny][nx] = (suiv === '.') ? '+' : '@';
+              ligJoueur = ny; colJoueur = nx;
+              nbCoups++;
+            } else if(suiv === '$' || suiv === '*') {
+              let py = ny + dy, px = nx + dx;
+              if(py>=0 && py<TAILLE && px>=0 && px<TAILLE) {
+                let apres = plateau[py][px];
+                if(apres === ' ' || apres === '.') {
+                  plateau[py][px] = (apres === '.') ? '*' : '$';
+                  plateau[ny][nx] = (suiv === '*') ? '+' : '@';
+                  plateau[y][x] = (actuel === '+') ? '.' : ' ';
+                  ligJoueur = ny; colJoueur = nx;
+                  nbCoups++;
+                }
+              }
+            }
+            render();
+            if(gagne()) {
+              gameOver = true;
+              terminal.innerHTML += "\n*** Félicitations ! Vous avez gagné en " + nbCoups + " coups ! ***\nA bientôt !\n";
+            }
+          }
+
+          function render() {
+            let out = "";
+            out += "<span style='font-weight:bold; color:#3b82f6;'>              ==============================</span>\n";
+            out += "<span style='font-weight:bold; color:#06b6d4;'>                      S O K O B A N</span>\n";
+            out += "<span style='font-weight:bold; color:#3b82f6;'>              ==============================</span>\n";
+            out += "<span style='color:#eab308;'>                Projet BUT1 Informatique</span>\n";
+            out += "<span style='color:#06b6d4;'>                    IUT de Lannion</span>\n\n";
+            out += "<span style='color:#d946ef;'>               -- Déplacez les caisses --\n               --   jusqu\'aux cibles   --</span>\n\n";
+            out += "<span style='font-weight:bold; color:#ef4444;'>|--------------------------------------------------------|</span>\n";
+            
+            out += "<span style='font-weight:bold; color:#ef4444;'>|</span>Fichier : <span style='font-weight:bold; color:#22c55e;'>                       " + currentLevelFile + "            </span><span style='font-weight:bold; color:#ef4444;'>|</span>\n";
+            out += "<span style='font-weight:bold; color:#ef4444;'>|</span>Touches : q (gauche) | z (haut)  | s (bas) | d (droite) <span style='font-weight:bold; color:#ef4444;'>|</span>\n";
+            out += "<span style='font-weight:bold; color:#ef4444;'>|</span>Autres touches : r (recommencer) | x (abandonner)       <span style='font-weight:bold; color:#ef4444;'>|</span>\n";
+            let cstr = nbCoups.toString().padStart(3, ' ');
+            out += "<span style='font-weight:bold; color:#ef4444;'>|</span>Nombre de deplacements : " + cstr + "                            <span style='font-weight:bold; color:#ef4444;'>|</span>\n";
+            out += "<span style='font-weight:bold; color:#ef4444;'>|--------------------------------------------------------|</span>\n\n";
+            
+            for(let i=0; i<TAILLE; i++) {
+              out += "                        "; // L'indentation du C
+              for(let j=0; j<TAILLE; j++) {
+                let c = plateau[i][j];
+                out += c;
+              }
+              out += "\n";
+            }
+            terminal.innerHTML = out;
+          }
+
+          terminal.addEventListener('keydown', (e) => {
+            if(!hasFocus) return;
+            if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) {
+              e.preventDefault();
+            }
+            let k = e.key.toLowerCase();
+            if(k === 'r') initPartie(currentLevelFile);
+            else if(k === 'x') {
+              gameOver = true;
+              render();
+              terminal.innerHTML += "\nPartie abandonnée après " + nbCoups + " coups.\nVoulez-vous sauvegarder la partie ? (o/n) : n\nAucune sauvegarde effectuée.\nA bientôt !\n";
+            }
+            else if(['z','q','s','d','arrowup','arrowdown','arrowleft','arrowright'].includes(k)) {
+              if(k === 'arrowup') k = 'z';
+              if(k === 'arrowdown') k = 's';
+              if(k === 'arrowleft') k = 'q';
+              if(k === 'arrowright') k = 'd';
+              deplacer(k);
+            }
+          });
+
+          container.addEventListener('click', () => {
+            terminal.focus();
+          });
+
+          terminal.addEventListener('focus', () => {
+            hasFocus = true;
+            overlay.style.display = 'none';
+          });
+
+          terminal.addEventListener('blur', () => {
+            hasFocus = false;
+            overlay.style.display = 'flex';
+          });
+
+          document.querySelectorAll('.level-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              let f = e.target.getAttribute('data-level');
+              initPartie(f);
+              terminal.focus();
+            });
+          });
+
+          initPartie('niveau1.sok');
+        });
+      </script>
+
+      <h2 class="text-gradient mt-6 mb-4 text-center">📂 Ressources de la Version 1</h2>
+      
+      <div class="resources-glass-container">
+        <div class="glass-tabs">
+          <button class="glass-tab" data-target="res-code-v1">
+            <span class="tab-icon">💻</span>
+            <span class="tab-text">Code V1</span>
+          </button>
+          <button class="glass-tab" data-target="res-consignes-v1">
+            <span class="tab-icon">📄</span>
+            <span class="tab-text">Sujet V1</span>
+          </button>
+          <button class="glass-tab" data-target="res-prez-v1">
+            <span class="tab-icon">📊</span>
+            <span class="tab-text">Diapo</span>
+          </button>
+        </div>
+        <div class="glass-content-area">
+          <div id="res-code-v1" class="glass-pane">
+            <h3 class="mt-0 mb-3 text-gradient">Code source (Sokoban_V1.c)</h3>
+            <div class="code-scroll">
+              <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;termios.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;stdbool.h&gt;
+#include &lt;string.h&gt;
+
+
+/* Source de ces connaissances de couleurs : 
+°https://en.wikipedia.org/wiki/ANSI_escape_code#Control_Sequence_Introducer_co-
+mands
+°
+                                             - */
+/* Définition des codes de couleurs pour l&#x27;affichage */
+#define RESET &quot;\033[0m&quot;
+#define JAUNE &quot;\033[33m&quot; 
+#define MAGENTA &quot;\033[35m&quot;
+#define CYAN &quot;\033[36m&quot;
+#define BLEU_GRAS &quot;\033[1;34m&quot;
+#define CYAN_GRAS &quot;\033[1;36m&quot;
+#define ROUGE_GRAS &quot;\033[1;31m&quot;
+#define VERT_GRAS &quot;\033[1;32m&quot;
+
+/* Constantes -&gt; Taille pour tableau, touches d&#x27;action et symboles 
+d&#x27;affichage */
+#define TAILLE 12
+
+#define TOUCHE_HAUT &#x27;z&#x27;
+#define TOUCHE_BAS &#x27;s&#x27;
+#define TOUCHE_GAUCHE &#x27;q&#x27;
+#define TOUCHE_DROITE &#x27;d&#x27;
+
+#define TOUCHE_ABANDON &#x27;x&#x27;
+#define TOUCHE_RECOMMENCER &#x27;r&#x27;
+#define REP_OUI_MIN &#x27;o&#x27;
+#define REP_OUI_MAJ &#x27;O&#x27;
+
+#define SYM_CAISSE &#x27;$&#x27;
+#define SYM_MUR &#x27;#&#x27;
+#define SYM_CIBLE &#x27;.&#x27;
+#define SYM_SOKOBAN &#x27;@&#x27;
+#define SYM_SOKOBAN_SUR_CIBLE &#x27;+&#x27;
+#define SYM_CAISSE_SUR_CIBLE &#x27;*&#x27;
+#define SYM_VIDE &#x27; &#x27;
+
+/* Nouveau type pour le plateau */
+typedef char t_plateau[TAILLE][TAILLE];
+
+/* Prototypes des fonctions fournies  */
+int kbhit(void);
+void chargerPartie(t_plateau plateau, char fichier[]);
+void enregistrerPartie(t_plateau plateau, char fichier[]);
+
+/* Prototypes imposés par la consigne */
+void afficherEntete(const char nomFichier[], int nombreDeCoup);
+void afficherPlateau(const t_plateau plateau);
+void deplacer(t_plateau plateau, int *ligneJoueur, int *colonneJoueur,
+     char touche, int *nombreDeCoup);
+bool gagne(const t_plateau plateau);
+
+/* Prototypes pour fonctions d&#x27;aide */
+bool calculer_deplacement(char touche,
+                    int ligneJoueur, int colonneJoueur,
+                    int *deplacementX, int *deplacementY,
+                    int *prochainX, int *prochainY);
+
+void pousser_caisse(t_plateau plateau, int *ligne_joueur, int *col_joueur,
+                int deplacementX, int deplacementY, int x, int y,
+                int prochainX, int prochainY, char actuel, char suivant,
+                int *nombreDeCoup);
+void gerer_fin_partie(t_plateau plateau, int nombreDeCoup);
+void position_joueur(const t_plateau plateau, int *ligneJoueur,
+     int *colonneJoueur);
+int compter_cibles(const t_plateau plateau);
+void position_cibles(int coords[][2], const t_plateau plateau, 
+    int nombreCibles);
+void actualiser_cibles(int coords[][2], t_plateau plateau, int nombreCibles);
+
+/* ------------------ Programme principal : fonction main ------------------ */
+int main(void) {
+    t_plateau plateau;
+    char nomFichier[256];
+    int ligneJoueur = -1;
+    int colonneJoueur = -1;
+    char touche = &#x27;\0&#x27;;
+    int nombreDeCoup = 0;
+
+    printf(&quot;Nom du fichier .sok à charger (ex: niveauX.sok) : &quot;);
+    scanf(&quot;%s&quot;, nomFichier);
+
+    chargerPartie(plateau, nomFichier);
+
+    position_joueur(plateau, &amp;ligneJoueur, &amp;colonneJoueur);
+
+    /* compter et mémoriser les cibles */
+    int nbCibles = compter_cibles(plateau);
+    int coordsCibles[nbCibles][2];
+    position_cibles(coordsCibles, plateau, nbCibles);
+
+    /* affichage initial */
+    afficherEntete(nomFichier, nombreDeCoup);
+    afficherPlateau(plateau);
+
+    /* boucle de jeu */
+    while (touche != TOUCHE_ABANDON &amp;&amp; !gagne(plateau)) {
+        touche = &#x27;\0&#x27;;
+        if (kbhit()) {
+            touche = getchar();
+
+            if (touche == TOUCHE_RECOMMENCER) {
+                /* recommencer la partie */
+                nombreDeCoup = 0;
+                chargerPartie(plateau, nomFichier);
+                position_joueur(plateau, &amp;ligneJoueur, &amp;colonneJoueur);
+                /* repositionner les cibles */
+                nbCibles = compter_cibles(plateau);
+                position_cibles(coordsCibles, plateau, nbCibles);
+
+                afficherEntete(nomFichier, nombreDeCoup);
+                afficherPlateau(plateau);
+                continue;
+            }
+
+            /* déplacement (ou autre action) */
+            deplacer(plateau, &amp;ligneJoueur, &amp;colonneJoueur, touche, 
+                &amp;nombreDeCoup);
+            actualiser_cibles(coordsCibles, plateau, nbCibles);
+            afficherEntete(nomFichier, nombreDeCoup);
+            afficherPlateau(plateau);
+        }
+    }
+
+    /* fin de partie : victoire ou abandon */
+    gerer_fin_partie(plateau, nombreDeCoup);
+
+    return EXIT_SUCCESS;
+}
+
+/* ------------------ Fonctions imposées en consigne ------------------ */
+
+/* Affichage de l&#x27;entete avec des couleurs appelées avec les variables de 
+couleurs*/
+void afficherEntete(const char nomFichier[], int nombreDeCoup) {
+    system(&quot;clear&quot;);
+    printf(BLEU_GRAS &quot;              ==============================\n&quot; RESET);
+    printf(CYAN_GRAS &quot;                      S O K O B A N\n&quot; RESET);
+    printf(BLEU_GRAS &quot;              ==============================\n&quot; RESET);
+
+    printf(JAUNE &quot;                Projet BUT1 Informatique\n&quot; RESET);
+    printf(CYAN &quot;                    IUT de Lannion\n\n&quot; RESET);
+
+    printf(MAGENTA &quot;               -- Déplacez les caisses --\n&quot;);
+    printf(&quot;               --   jusqu&#x27;aux cibles   --\n\n&quot; RESET);
+
+    printf(ROUGE_GRAS &quot;|----------------------------------------------------&quot;);
+    printf(&quot;----|\n&quot; RESET);
+    printf(ROUGE_GRAS&quot;|&quot;RESET&quot;Fichier : &quot;VERT_GRAS&quot;                       &quot;);
+    printf(&quot;%s            &quot;ROUGE_GRAS&quot;|\n&quot;RESET, nomFichier);
+    printf(ROUGE_GRAS&quot;|&quot;RESET&quot;Touches : q (gauche) | z (haut)  | s (bas) | &quot;);
+    printf(&quot;d (droite) &quot;ROUGE_GRAS&quot;|\n&quot;RESET);
+    printf(ROUGE_GRAS&quot;|&quot;RESET&quot;Autres touches : r (recommencer) |&quot;);
+    printf(&quot; x (abandonner)       &quot;ROUGE_GRAS&quot;|\n&quot;RESET);
+    printf(ROUGE_GRAS&quot;|&quot;RESET&quot;Nombre de deplacements : &quot;);
+    printf(&quot;%3d                            &quot;, nombreDeCoup);
+    printf(ROUGE_GRAS&quot;|\n&quot;RESET);
+    printf(ROUGE_GRAS &quot;|----------------------------------------------&quot;);
+    printf(&quot;----------|\n\n&quot; RESET);
+}
+
+// (le code est désastreu du au respect des 80 caractères par ligne imposé...)
+
+ /* ici, on utilise %3d pour ne pas avoir de débordement lorsque le nombre de 
+ déplacement prends une dizaine ou centaine */
+void afficherPlateau(const t_plateau plateau) {
+    for (int i = 0 ; i &lt; TAILLE ; i++) {
+        printf(&quot;                        &quot;);
+
+        for (int j = 0 ; j &lt; TAILLE ; j++) {
+            char c = plateau[i][j];
+            /* pour l&#x27;affichage, on ne distingue pas caisse/caisse_sur_cible
+               ni sokoban/sokoban_sur_cible */
+            if (c == SYM_CAISSE || c == SYM_CAISSE_SUR_CIBLE) {
+                printf(&quot;%c&quot;, SYM_CAISSE);
+            } 
+            else if (c == SYM_SOKOBAN || c == SYM_SOKOBAN_SUR_CIBLE) {
+                printf(&quot;%c&quot;, SYM_SOKOBAN);
+            } 
+            else if (c == SYM_MUR) {
+                printf(&quot;%c&quot;, SYM_MUR);
+            } 
+            else if (c == SYM_CIBLE) {
+                printf(&quot;%c&quot;, SYM_CIBLE);
+            } 
+            else {
+                printf(&quot;%c&quot;, SYM_VIDE);
+            }
+        }
+        printf(&quot;\n&quot;);
+    }
+}
+
+
+void deplacer(t_plateau plateau, int *ligneJoueur, int *colonneJoueur,
+     char touche, int *nombreDeCoup) {
+    int deplacementX = 0;
+    int deplacementY = 0;
+
+    int x = *colonneJoueur;
+    int y = *ligneJoueur;
+    int prochainX = x + deplacementX;
+    int prochainY = y + deplacementY;
+    
+    if (calculer_deplacement(touche, *ligneJoueur, *colonneJoueur,
+                         &amp;deplacementX, &amp;deplacementY, &amp;prochainX, 
+                         &amp;prochainY) == true) {
+    /* la touche est valide — continuer le traitement */
+    } else {
+        return; /* touche non valide */
+    }
+    /* verifier les cas impossibles */
+    if (prochainX &lt; 0 || prochainX &gt;= TAILLE || 
+        prochainY &lt; 0 || prochainY &gt;= TAILLE) {
+        return;
+    }
+    char actuel = plateau[y][x]; /* symbole actuel du joueur */
+    char suivant = plateau[prochainY][prochainX];
+
+    /* mouvement simple */
+    if (suivant == SYM_VIDE || suivant == SYM_CIBLE) {
+        /* liberer la case actuelle */
+        if (actuel == SYM_SOKOBAN_SUR_CIBLE) {
+            plateau[y][x] = SYM_CIBLE;
+        }
+        else {
+            plateau[y][x] = SYM_VIDE;
+        }
+
+        /* arriver sur case suivante */
+        if (suivant == SYM_CIBLE) {
+            plateau[prochainY][prochainX] = SYM_SOKOBAN_SUR_CIBLE;
+        }
+        else {
+            plateau[prochainY][prochainX] = SYM_SOKOBAN;
+        }
+
+        *ligneJoueur = prochainY;
+        *colonneJoueur = prochainX;
+        (*nombreDeCoup)++;
+        return;
+    }
+
+    /* pousse d&#x27;une caisse si possible */
+    if (suivant == SYM_CAISSE || suivant == SYM_CAISSE_SUR_CIBLE) {
+        pousser_caisse(plateau, ligneJoueur, colonneJoueur, deplacementX, 
+                deplacementY, x, y, prochainX, prochainY, actuel, suivant,
+                nombreDeCoup);
+    return;
+}
+}
+
+
+
+bool gagne(const t_plateau plateau) {
+    for (int i = 0 ; i &lt; TAILLE ; i++) {
+        for (int j = 0 ; j &lt; TAILLE ; j++) {
+            if (plateau[i][j] == SYM_CAISSE) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+/* ------------------ Fonctions d&#x27;aide ------------------------------- */
+
+bool calculer_deplacement(char touche,
+                    int ligneJoueur, int colonneJoueur,
+                    int *deplacementX, int *deplacementY,
+                    int *prochainX, int *prochainY)
+{
+    int deplacementXTemp = 0;
+    int deplacementYTemp = 0;
+
+    if (touche == TOUCHE_GAUCHE) deplacementXTemp = -1;
+    else if (touche == TOUCHE_DROITE) deplacementXTemp = 1;
+    else if (touche == TOUCHE_HAUT) deplacementYTemp = -1;
+    else if (touche == TOUCHE_BAS) deplacementYTemp = 1;
+    else return false; /* touche non prise en compte */
+
+    *deplacementX = deplacementXTemp;
+    *deplacementY = deplacementYTemp;
+    *prochainX = colonneJoueur + deplacementXTemp;
+    *prochainY = ligneJoueur + deplacementYTemp;
+
+    return true;
+}
+
+
+
+void pousser_caisse(t_plateau plateau,
+                    int *ligneJoueur, int *colonneJoueur,
+                    int deplacementX, int deplacementY,
+                    int x, int y,
+                    int prochainX, int prochainY,
+                    char actuel, char suivant,
+                    int *nombreDeCoup) {
+                        int prochainX2 = prochainX + deplacementX;
+        int prochainY2 = prochainY + deplacementY;
+        if (prochainX2 &lt; 0 || prochainX2 &gt;= TAILLE || prochainY2 &lt; 0 || 
+            prochainY2 &gt;= TAILLE) {
+            return;
+        }
+
+        char beyond = plateau[prochainY2][prochainX2];
+        if (beyond == SYM_VIDE || beyond == SYM_CIBLE) {
+            /* deplacer la caisse */
+            if (beyond == SYM_CIBLE) {
+                plateau[prochainY2][prochainX2] = SYM_CAISSE_SUR_CIBLE;
+            }
+            else {
+                plateau[prochainY2][prochainX2] = SYM_CAISSE;
+            }
+
+            /* remplacer l&#x27;ancienne position de la caisse par sokoban */
+            if (suivant == SYM_CAISSE_SUR_CIBLE) {
+                plateau[prochainY][prochainX] = SYM_SOKOBAN_SUR_CIBLE;
+            }
+            else {
+                plateau[prochainY][prochainX] = SYM_SOKOBAN;
+            }
+
+            /* liberer la case actuelle */
+            if (actuel == SYM_SOKOBAN_SUR_CIBLE) {
+                plateau[y][x] = SYM_CIBLE;
+            }
+            else {
+                plateau[y][x] = SYM_VIDE;
+            }
+
+            *ligneJoueur = prochainY;
+            *colonneJoueur = prochainX;
+            (*nombreDeCoup)++;
+        }
+    }
+
+
+void gerer_fin_partie(t_plateau plateau, int nombreDeCoup) {
+    if (!gagne(plateau)) {
+        /* proposition de sauvegarde */
+        printf(&quot;\nPartie abandonnée après %d coups.\n&quot;, nombreDeCoup);
+        printf(&quot;Voulez-vous sauvegarder la partie ? (o/n) : &quot;);
+        /* lire la réponse */
+        char reponse;
+        reponse = getchar();
+        if (reponse == REP_OUI_MIN || reponse == REP_OUI_MAJ) {
+            char nomSauvegarde[260];
+            printf(&quot;Nom du fichier de sauvegarde (sans extension) : &quot;);
+            scanf(&quot;%s&quot;, nomSauvegarde);
+            strcat(nomSauvegarde, &quot;.sok&quot;);
+            enregistrerPartie(plateau, nomSauvegarde);
+            printf(&quot;Partie sauvegardée dans %s\n&quot;, nomSauvegarde);
+            
+        } 
+        else {
+            system(&quot;clear&quot;);
+            printf(&quot;Aucune sauvegarde effectuée.\n&quot;);
+            printf(&quot;A bientôt !\n&quot;);
+        }
+    } 
+    else {
+        printf(&quot;\n*** Félicitations ! Vous avez gagné en %d coups ! ***\n&quot;, 
+            nombreDeCoup);
+        printf(&quot;A bientôt !\n&quot;);
+    }
+}
+
+void position_joueur(const t_plateau plateau, int *ligneJoueur, 
+    int *colonneJoueur) {
+    *ligneJoueur = -1;
+    *colonneJoueur = -1;
+    for (int i = 0 ; i &lt; TAILLE ; i++) {
+        for (int j = 0 ; j &lt; TAILLE ; j++) {
+            if (plateau[i][j] == SYM_SOKOBAN ||
+                 plateau[i][j] == SYM_SOKOBAN_SUR_CIBLE) {
+                *ligneJoueur = i;
+                *colonneJoueur = j;
+                return; /* on sort dès que le sokoban est trouvé */
+            }
+        }
+    }
+}
+
+int compter_cibles(const t_plateau plateau) {
+    int compteur = 0;
+    for (int i = 0 ; i &lt; TAILLE ; i++) {
+        for (int j = 0 ; j &lt; TAILLE ; j++) {
+            if (plateau[i][j] == SYM_CIBLE || 
+                plateau[i][j] == SYM_CAISSE_SUR_CIBLE) {
+                compteur++;
+            }
+        }
+    }
+    return compteur;
+}
+
+void position_cibles(int coords[][2], const t_plateau plateau,
+     int nombreCibles) {
+    int indiceCible = 0;
+    for (int i = 0 ; i &lt; TAILLE ; i++) {
+        for (int j = 0 ; j &lt; TAILLE ; j++) {
+            if (plateau[i][j] == SYM_CIBLE ||
+                 plateau[i][j] == SYM_CAISSE_SUR_CIBLE) {
+                coords[indiceCible][0] = i;
+                coords[indiceCible][1] = j;
+                indiceCible++;
+                if (indiceCible &gt;= nombreCibles) {
+                    return;
+                }
+            }
+        }
+    }
+}
+
+void actualiser_cibles(int coords[][2], t_plateau plateau, int nombreCibles) {
+    for (int compteurCible = 0 ; compteurCible &lt; nombreCibles ; compteurCible++) {
+        int ligneCible = coords[compteurCible][0];
+        int colonneCible = coords[compteurCible][1];
+        if (plateau[ligneCible][colonneCible] == SYM_VIDE) {
+            plateau[ligneCible][colonneCible] = SYM_CIBLE;
+        }
+        else if (plateau[ligneCible][colonneCible] == SYM_SOKOBAN) {
+            plateau[ligneCible][colonneCible] = SYM_SOKOBAN_SUR_CIBLE;
+        }
+        else if (plateau[ligneCible][colonneCible] == SYM_CAISSE) {
+            plateau[ligneCible][colonneCible] = SYM_CAISSE_SUR_CIBLE;
+        }
+    }
+}
+
+/* ------------------ Fonctions fournies ------------------ */
+
+int kbhit(){
+    int unCaractere = 0;
+    struct termios oldt, newt;
+    int ch;
+    int oldf;
+
+    tcgetattr(STDIN_FILENO, &amp;oldt);
+    newt = oldt;
+    newt.c_lflag &amp;= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &amp;newt);
+    oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+    fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+
+    ch = getchar();
+
+    tcsetattr(STDIN_FILENO, TCSANOW, &amp;oldt);
+    fcntl(STDIN_FILENO, F_SETFL, oldf);
+
+    if (ch != EOF) {
+        ungetc(ch, stdin);
+        unCaractere = 1;
+    }
+    return unCaractere;
+}
+
+void chargerPartie(t_plateau plateau, char fichier[]){
+    FILE *f;
+    char finDeLigne;
+
+    f = fopen(fichier, &quot;r&quot;);
+    if (f == NULL) {
+        printf(&quot;ERREUR SUR FICHIER\n&quot;);
+        exit(EXIT_FAILURE);
+    }
+    for (int ligne = 0 ; ligne &lt; TAILLE ; ligne++){
+        for (int colonne = 0 ; colonne &lt; TAILLE ; colonne++){
+            fread(&amp;plateau[ligne][colonne], sizeof(char), 1, f);
+        }
+        fread(&amp;finDeLigne, sizeof(char), 1, f);
+    }
+    fclose(f);
+}
+
+void enregistrerPartie(t_plateau plateau, char fichier[]){
+    FILE * f;
+    char finDeLigne = &#x27;\n&#x27;;
+
+    f = fopen(fichier, &quot;w&quot;);
+    for (int ligne = 0 ; ligne &lt; TAILLE ; ligne++){
+        for (int colonne = 0 ; colonne &lt; TAILLE ; colonne++){
+            fwrite(&amp;plateau[ligne][colonne], sizeof(char), 1, f);
+        }
+        fwrite(&amp;finDeLigne, sizeof(char), 1, f);
+    }
+    fclose(f);
+}
+</code></pre>
+            </div>
+            <div class="mt-3 text-right">
+              <a href="Assets/SAE1.01/Sokoban_V1.c" download class="btn btn-secondary">📥 Télécharger (.c)</a>
+            </div>
+          </div>
+          <div id="res-consignes-v1" class="glass-pane">
+            <h3 class="mt-0 mb-3 text-gradient">Consignes (Version 1)</h3>
+            <iframe src="Assets/SAE1.01/Consignes%20Version%201-1.pdf" width="100%" height="600px" style="border:none; border-radius:8px;"></iframe>
+            <div class="mt-3 text-right">
+              <a href="Assets/SAE1.01/Consignes%20Version%201-1.pdf" download class="btn btn-secondary">📥 Télécharger (PDF)</a>
+            </div>
+          </div>
+          <div id="res-prez-v1" class="glass-pane">
+            <h3 class="mt-0 mb-3 text-gradient">Présentation de la SAÉ</h3>
+            <iframe src="Assets/SAE1.01/pr%C3%A9sentation%20SAE1%20sokoban.pdf" width="100%" height="600px" style="border:none; border-radius:8px;"></iframe>
+            <div class="mt-3 text-right">
+              <a href="Assets/SAE1.01/pr%C3%A9sentation%20SAE1%20sokoban.pdf" download class="btn btn-secondary">📥 Télécharger (PDF)</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      </div> <!-- End of v1 -->
+
+      <div id="v2" class="version-content">
+        <h2 class="text-gradient">🌟 Introduction</h2>
+        <p>Après avoir validé le moteur de base, l'objectif de la Version 2 était d'enrichir l'expérience utilisateur par des fonctionnalités avancées. Ce projet démontre une maîtrise accrue de la gestion d'états et de la manipulation de fichiers.</p>
+
+        <h2 class="text-gradient">📍 Situation</h2>
+        <p>La base de la V1 étant solide, le "client" a émis de nouvelles exigences pour rendre le jeu plus moderne et ergonomique. L'enjeu principal était d'ajouter de la "mémoire" au programme pour permettre de revenir en arrière et de sauvegarder le parcours du joueur.</p>
+
+        <h2 class="text-gradient">🎯 Task (Mission)</h2>
+        <p>Les nouveaux objectifs techniques pour cette V2 comprenaient :</p>
+        <ul>
+          <li><strong>Système de Zoom Dynamique :</strong> Proposer trois niveaux d'échelle (1x, 2x, 3x) pour le plateau.</li>
+          <li><strong>Gestion d'Historique :</strong> Mémoriser chaque mouvement pour permettre d'annuler un coup (Undo) avec la touche 'u'.</li>
+          <li><strong>Sauvegarde du parcours :</strong> Permettre de sauvegarder l'historique complet des déplacements dans un fichier <code>.dep</code> à la fin de la partie.</li>
+        </ul>
+
+        <h2 class="text-gradient">🛠️ Action (Mise en œuvre)</h2>
+        <h3>1. Le Zoom Dynamique</h3>
+        <p>Pour le zoom, j'ai repensé la fonction d'affichage du plateau en utilisant des boucles imbriquées supplémentaires. Le paramètre <code>zoom</code> multiplie chaque caractère horizontalement et verticalement, offrant une grille plus lisible.</p>
+
+        <h3>2. L'Historique et le "Undo"</h3>
+        <p>J'ai implémenté un tableau à une dimension <code>t_tabDeplacement</code> pour stocker chaque action ('h', 'b', 'g', 'd' pour un déplacement simple, et 'H', 'B', 'G', 'D' pour une poussée). La fonction <code>annuler_coup()</code> lit la dernière action, applique le vecteur de déplacement inversé pour replacer le joueur, et si l'action était une majuscule, "tire" la caisse en arrière.</p>
+
+        <h2 class="text-gradient">🏆 Result (Résultat)</h2>
+        <p>Le jeu est désormais beaucoup plus tolérant aux erreurs. Le joueur n'a plus à recommencer le niveau entier pour une seule erreur de poussée, ce qui rend le Sokoban nettement plus agréable à jouer.</p>
+
+        <h2 class="text-gradient mt-6 mb-4 text-center">🎮 Simulation Interactive (V2)</h2>
+        <p class="text-center mb-4 text-secondary">Testez le moteur de la Version 2 avec le système de Zoom (+/-) et le retour en arrière (u).</p>
+        
+        <div style="display:flex; justify-content:center; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
+          <button class="btn btn-secondary level-btn-v2" data-level="niveau1.sok" style="padding:5px 15px; font-size:0.8rem;">Niveau 1</button>
+          <button class="btn btn-secondary level-btn-v2" data-level="niveau2.sok" style="padding:5px 15px; font-size:0.8rem;">Niveau 2</button>
+          <button class="btn btn-secondary level-btn-v2" data-level="niveau3.sok" style="padding:5px 15px; font-size:0.8rem;">Niveau 3</button>
+          <button class="btn btn-secondary level-btn-v2" data-level="niveau4.sok" style="padding:5px 15px; font-size:0.8rem;">Niveau 4</button>
+          <button class="btn btn-secondary level-btn-v2" data-level="niveau5.sok" style="padding:5px 15px; font-size:0.8rem;">Niveau 5</button>
+          <button class="btn btn-secondary level-btn-v2" data-level="niveau6.sok" style="padding:5px 15px; font-size:0.8rem;">Niveau 6</button>
+        </div>
+
+        <div class="terminal-emulator-container" style="margin: 0 auto 50px auto; max-width: 600px; background: #0c0c0c; border-radius: 10px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.6); font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #ccc; border: 1px solid #333;">
+          <div style="background: #222; padding: 10px 15px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #333;">
+            <div style="width: 12px; height: 12px; border-radius: 50%; background: #ff5f56;"></div>
+            <div style="width: 12px; height: 12px; border-radius: 50%; background: #ffbd2e;"></div>
+            <div style="width: 12px; height: 12px; border-radius: 50%; background: #27c93f;"></div>
+            <span style="margin-left: auto; margin-right: auto; color: #888; font-size: 12px; transform: translateX(-24px);">leny@iut-lannion: ~/sokoban_v2</span>
+          </div>
+          <div id="sokoban-container-v2" style="position: relative; min-height: 480px; cursor: pointer; overflow:hidden;">
+            <div id="sokoban-terminal-v2" tabindex="0" style="padding: 20px; outline: none; white-space: pre; line-height: 1.2; min-height: 480px;">
+              <!-- JS will render here -->
+            </div>
+            <div id="sokoban-overlay-v2" style="position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; flex-direction:column; border-radius: 0 0 10px 10px;">
+              <div style="font-size:3rem; margin-bottom:10px;">▶️</div>
+              <div style="font-weight:bold;">Cliquez pour jouer</div>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          document.addEventListener('DOMContentLoaded', () => {
+            const terminal = document.getElementById('sokoban-terminal-v2');
+            const overlay = document.getElementById('sokoban-overlay-v2');
+            const container = terminal ? terminal.parentElement : null;
+            if(!terminal) return;
+
+            const NIVEAUX = {
+              'niveau1.sok': ['  ####      ','###  ####   ','#     $ #   ','# #  #$ #   ','# . .#@ #   ','#########   ','            ','            ','            ','            ','            ','            '],
+              'niveau2.sok': [' #####      ',' #@  #      ',' # $$# ###  ',' # $ # #.#  ',' ### ###.#  ','  ##    .#  ','  #   #  #  ','  #   ####  ','  #####     ','            ','            ','            '],
+              'niveau3.sok': [' #####      ',' #.  ##     ',' #@$$ #     ',' ##   #     ','  ##  #     ','   ##.#     ','    ###     ','            ','            ','            ','            ','            '],
+              'niveau4.sok': [' ######     ',' #.  #####  ',' #.  $...#  ',' # $#  $##  ',' #  ## @ #  ',' #   $ $ #  ',' ######  #  ','      ####  ','            ','            ','            ','            '],
+              'niveau5.sok': [' ####       ',' #. ##      ',' #.@ #      ',' #. $#      ',' ##$ ###    ','  # $  #    ','  #    #    ','  #  ###    ','  ####      ','            ','            ','            '],
+              'niveau6.sok': ['  #####     ','###   #     ','#.@$  #     ','### $.#     ','#.##$ #     ','# # . ##    ','#$ *$$.#    ','#   .  #    ','########    ','            ','            ','            ']
+            };
+            
+            const TAILLE = 12;
+            let plateau = [];
+            let hist = [];
+            let currentLevelFile = 'niveau1.sok';
+            let ligJoueur = 0;
+            let colJoueur = 0;
+            let nbCoups = 0;
+            let zoom = 1;
+            let gameOver = false;
+            let hasFocus = false;
+
+            function initPartie(filename) {
+              currentLevelFile = filename;
+              let NIVEAU = NIVEAUX[filename];
+              plateau = [];
+              hist = [];
+              nbCoups = 0;
+              zoom = 1;
+              gameOver = false;
+              for(let i=0; i<TAILLE; i++) {
+                let row = (NIVEAU[i] || "").split('');
+                while(row.length < TAILLE) row.push(' ');
+                plateau.push(row);
+                for(let j=0; j<TAILLE; j++) {
+                  if(plateau[i][j] === '@' || plateau[i][j] === '+') {
+                    ligJoueur = i; colJoueur = j;
+                  }
+                }
+              }
+              render();
+            }
+
+            function gagne() {
+              for(let i=0; i<TAILLE; i++) {
+                for(let j=0; j<TAILLE; j++) {
+                  if(plateau[i][j] === '$') return false;
+                }
+              }
+              return true;
+            }
+
+            function deplacer(direction) {
+              let dy=0, dx=0, code='?';
+              switch(direction.toLowerCase()) {
+                case 'z': dy=-1; code='h'; break;
+                case 's': dy=1; code='b'; break;
+                case 'q': dx=-1; code='g'; break;
+                case 'd': dx=1; code='d'; break;
+              }
+              if(code === '?') return;
+
+              let y = ligJoueur, x = colJoueur;
+              let ny = y + dy, nx = x + dx;
+              if(ny<0 || ny>=TAILLE || nx<0 || nx>=TAILLE) return;
+
+              let actuel = plateau[y][x];
+              let suiv = plateau[ny][nx];
+
+              if(suiv === ' ' || suiv === '.') {
+                plateau[y][x] = (actuel === '+') ? '.' : ' ';
+                plateau[ny][nx] = (suiv === '.') ? '+' : '@';
+                ligJoueur = ny; colJoueur = nx;
+                hist[nbCoups++] = code;
+              } else if(suiv === '$' || suiv === '*') {
+                let py = ny + dy, px = nx + dx;
+                if(py>=0 && py<TAILLE && px>=0 && px<TAILLE) {
+                  let apres = plateau[py][px];
+                  if(apres === ' ' || apres === '.') {
+                    plateau[py][px] = (apres === '.') ? '*' : '$';
+                    plateau[ny][nx] = (suiv === '*') ? '+' : '@';
+                    plateau[y][x] = (actuel === '+') ? '.' : ' ';
+                    ligJoueur = ny; colJoueur = nx;
+                    hist[nbCoups++] = code.toUpperCase();
+                  }
+                }
+              }
+            }
+
+            function annuler_coup() {
+              if(nbCoups <= 0) return;
+              let mouv = hist[nbCoups - 1];
+              let dy=0, dx=0;
+              switch(mouv.toLowerCase()) {
+                case 'h': dy=1; break;
+                case 'b': dy=-1; break;
+                case 'g': dx=1; break;
+                case 'd': dx=-1; break;
+              }
+              let y = ligJoueur, x = colJoueur;
+              let py = y + dy, px = x + dx;
+              if(py<0 || py>=TAILLE || px<0 || px>=TAILLE) return;
+
+              plateau[y][x] = (plateau[y][x] === '+') ? '.' : ' ';
+              plateau[py][px] = (plateau[py][px] === '.') ? '+' : '@';
+
+              if(mouv >= 'A' && mouv <= 'Z') {
+                let cy = y - dy, cx = x - dx;
+                plateau[cy][cx] = (plateau[cy][cx] === '*') ? '.' : ' ';
+                plateau[y][x] = (plateau[y][x] === '.') ? '*' : '$';
+              }
+              ligJoueur = py; colJoueur = px;
+              nbCoups--;
+            }
+
+            function render() {
+              let out = "=== SOKOBAN V2 ===\n";
+              out += "Fichier : " + currentLevelFile + " | Coups : " + nbCoups + " | Zoom : " + zoom + "x\n";
+              out += "Touches : ZQSD, +/-, U=undo, R=reset, X=quitter\n";
+              out += "------------------------------------------------------\n";
+              
+              for(let i=0; i<TAILLE; i++) {
+                for(let v=0; v<zoom; v++) {
+                  for(let j=0; j<TAILLE; j++) {
+                    let c = plateau[i][j];
+                    for(let h=0; h<zoom; h++) {
+                        out += c;
+                    }
+                  }
+                  out += "\n";
+                }
+              }
+              terminal.innerHTML = out;
+            }
+
+            terminal.addEventListener('keydown', (e) => {
+              if(!hasFocus) return;
+              if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) {
+                e.preventDefault();
+              }
+              if(gameOver) return;
+
+              let k = e.key.toLowerCase();
+              if(k === 'r') { initPartie(currentLevelFile); return; }
+              if(k === 'x') {
+                gameOver = true;
+                render();
+                terminal.innerHTML += "\nPartie abandonnee (" + nbCoups + " coups).\nSauvegarder le plateau ? (o/n) : n\nSauvegarder l\'historique ? (o/n) : n\n";
+                return;
+              }
+              if(e.key === '+') { if(zoom < 3) { zoom++; render(); } }
+              else if(e.key === '-') { if(zoom > 1) { zoom--; render(); } }
+              else if(k === 'u') { annuler_coup(); render(); }
+              else if(['z','q','s','d','arrowup','arrowdown','arrowleft','arrowright'].includes(k)) {
+                if(k === 'arrowup') k = 'z';
+                if(k === 'arrowdown') k = 's';
+                if(k === 'arrowleft') k = 'q';
+                if(k === 'arrowright') k = 'd';
+                deplacer(k);
+                render();
+              }
+              
+              if(gagne()) {
+                gameOver = true;
+                terminal.innerHTML += "\nBravo ! Partie gagnee en " + nbCoups + " coups.\nSauvegarder l\'historique ? (o/n) : n\n";
+              }
+            });
+
+            container.addEventListener('click', () => {
+              terminal.focus();
+            });
+
+            terminal.addEventListener('focus', () => {
+              hasFocus = true;
+              overlay.style.display = 'none';
+            });
+
+            terminal.addEventListener('blur', () => {
+              hasFocus = false;
+              overlay.style.display = 'flex';
+            });
+
+            document.querySelectorAll('.level-btn-v2').forEach(btn => {
+              btn.addEventListener('click', (e) => {
+                let f = e.target.getAttribute('data-level');
+                initPartie(f);
+                terminal.focus();
+              });
+            });
+
+            initPartie('niveau1.sok');
+          });
+        </script>
+
+        <h2 class="text-gradient mt-6 mb-4 text-center">📂 Ressources de la Version 2</h2>
+        
+        <div class="resources-glass-container">
+          <div class="glass-tabs">
+            <button class="glass-tab" data-target="res-code-v2">
+              <span class="tab-icon">💻</span>
+              <span class="tab-text">Code V2</span>
+            </button>
+            <button class="glass-tab" data-target="res-consignes-v2">
+              <span class="tab-icon">📄</span>
+              <span class="tab-text">Sujet V2</span>
+            </button>
+          </div>
+          <div class="glass-content-area">
+            <div id="res-code-v2" class="glass-pane">
+              <h3 class="mt-0 mb-3 text-gradient">Code source (Sokoban_V2.c)</h3>
+              <div class="code-scroll">
+                <pre><code class="language-c">/**
+ * @file Sokoban_leny_V2.c
+ * @author Leny
+ * @brief Projet Sokoban V2 (Zoom, Undo, Historique) - IUT Lannion
+ * @version 2.0
+ * @date 2025-11-30
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;termios.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdbool.h&gt;
+
+/* --- CONSTANTES --- */
+#define TAILLE 12
+#define MAX_HISTORIQUE 1000
+
+/* Touches de jeu */
+#define TOUCHE_HAUT &#x27;z&#x27;
+#define TOUCHE_BAS &#x27;s&#x27;
+#define TOUCHE_GAUCHE &#x27;q&#x27;
+#define TOUCHE_DROITE &#x27;d&#x27;
+#define TOUCHE_ZOOM_PLUS &#x27;+&#x27;
+#define TOUCHE_ZOOM_MOINS &#x27;-&#x27;
+#define TOUCHE_ANNULER &#x27;u&#x27;
+#define TOUCHE_ABANDON &#x27;x&#x27;
+#define TOUCHE_RECOMMENCER &#x27;r&#x27;
+
+/* Symbols de jeu */
+#define SYM_MUR &#x27;#&#x27;
+#define SYM_VIDE &#x27; &#x27;
+#define SYM_CIBLE &#x27;.&#x27;
+#define SYM_CAISSE &#x27;$&#x27;
+#define SYM_CAISSE_SUR_CIBLE &#x27;*&#x27;
+#define SYM_SOKOBAN &#x27;@&#x27;
+#define SYM_SOKOBAN_SUR_CIBLE &#x27;+&#x27;
+
+/* --- TYPES --- */
+typedef char t_plateau[TAILLE][TAILLE];
+typedef char t_tabDeplacement[MAX_HISTORIQUE];
+
+/* --- PROTOTYPES --- */
+
+/* Fonctions fournies (Noms imposés) */
+int kbhit(void);
+void chargerPartie(t_plateau plateau, char fichier[]);
+void enregistrerPartie(t_plateau plateau, char fichier[]);
+void enregistrerDeplacements(t_tabDeplacement t, int nb, char fic[]);
+
+/* Mes fonctions */
+void afficher_entete(const char fichier[], int nbCoups, int zoom);
+void afficher_plateau(const t_plateau plateau, int zoom);
+bool gagne(const t_plateau plateau);
+void position_joueur(const t_plateau plateau, int *lig, int *col);
+
+void deplacer(t_plateau plateau, int *lig, int *col, char touche,
+              int *nbCoups, t_tabDeplacement hist);
+void annuler_coup(t_plateau plateau, t_tabDeplacement hist,
+                  int *nbCoups, int *lig, int *col);
+
+void traiter_touche(t_plateau plateau, char touche, int *nbCoups,
+                    t_tabDeplacement hist, int *zoom,
+                    int *lig, int *col);
+
+void gerer_fin_partie(t_plateau plateau, int nbCoups,
+                      t_tabDeplacement hist);
+
+void direction_depuis_touche(char touche, int *deltaY, int *deltaX, char *code);
+
+/* ------------------------------------------------------------------------- */
+/*                                   MAIN                                    */
+/* ------------------------------------------------------------------------- */
+
+int main(void) {
+    t_plateau plateau;
+    t_tabDeplacement historique;
+    char nomFichier[50];
+    char touche = &#x27;\0&#x27;;
+    int ligJoueur = 0;
+    int colJoueur = 0;
+    int nbCoups = 0;
+    int zoom = 1;
+
+    printf(&quot;Nom du fichier .sok : &quot;);
+    scanf(&quot;%s&quot;, nomFichier);
+
+    /* je charge la partie et je repère le joueur */
+    chargerPartie(plateau, nomFichier);
+    position_joueur(plateau, &amp;ligJoueur, &amp;colJoueur);
+
+    afficher_entete(nomFichier, nbCoups, zoom);
+    afficher_plateau(plateau, zoom);
+
+    /* Boucle du jeu, tant qu’on n’abandonne pas ou qu’on n’a pas gagné */
+    while (touche != TOUCHE_ABANDON &amp;&amp; !gagne(plateau)) {
+
+        if (kbhit()) {
+            touche = getchar();
+
+            if (touche == TOUCHE_RECOMMENCER) {
+                /* reset classique */
+                nbCoups = 0;
+                zoom = 1;
+                chargerPartie(plateau, nomFichier);
+                position_joueur(plateau, &amp;ligJoueur, &amp;colJoueur);
+            }
+            else if (touche != TOUCHE_ABANDON) {
+                traiter_touche(plateau, touche, &amp;nbCoups, historique,
+                               &amp;zoom, &amp;ligJoueur, &amp;colJoueur);
+            }
+
+            afficher_entete(nomFichier, nbCoups, zoom);
+            afficher_plateau(plateau, zoom);
+        }
+    }
+
+    gerer_fin_partie(plateau, nbCoups, historique);
+    return EXIT_SUCCESS;
+}
+
+/* ------------------------------------------------------------------------- */
+/*                                AFFICHAGE                                  */
+/* ------------------------------------------------------------------------- */
+
+void afficher_entete(const char fichier[], int nbCoups, int zoom) {
+    system(&quot;clear&quot;);
+    printf(&quot;=== SOKOBAN V2 ===\n&quot;);
+    printf(&quot;Fichier : %s | Coups : %d | Zoom : %dx\n&quot;,
+           fichier, nbCoups, zoom);
+    printf(&quot;Touches : ZQSD, +/-, U=undo, R=reset, X=quitter\n&quot;);
+    printf(&quot;------------------------------------------------------\n&quot;);
+}
+
+void afficher_plateau(const t_plateau plateau, int zoom) {
+    int i, j, v, h;
+    char c, sym;
+
+    /* j&#x27;affiche ligne par ligne en répétant selon le zoom */
+    for (i = 0; i &lt; TAILLE; i++) {
+        /* Répétition verticale pour le zoom */
+        for (v = 0; v &lt; zoom; v++) {
+
+            for (j = 0; j &lt; TAILLE; j++) {
+                c = plateau[i][j];
+                sym = SYM_VIDE;
+
+                /* Je convertis en symbole */
+                if (c == SYM_MUR) sym = SYM_MUR;
+                else if (c == SYM_CIBLE) sym = SYM_CIBLE;
+                else if (c == SYM_CAISSE || c == SYM_CAISSE_SUR_CIBLE)
+                    sym = SYM_CAISSE;
+                else if (c == SYM_SOKOBAN || c == SYM_SOKOBAN_SUR_CIBLE)
+                    sym = SYM_SOKOBAN;
+
+                /* Répétition horizontale pour le zoom */
+                for (h = 0; h &lt; zoom; h++)
+                    printf(&quot;%c&quot;, sym);
+            }
+            printf(&quot;\n&quot;);
+        }
+    }
+}
+
+
+bool gagne(const t_plateau plateau) {
+    /* on gagne quand il n&#x27;y a plus de caisses normales */   
+    int i, j;
+    for (i = 0; i &lt; TAILLE; i++) {
+        for (j = 0; j &lt; TAILLE; j++) {
+            if (plateau[i][j] == SYM_CAISSE)
+                return false;
+        }
+    }
+    return true;
+}
+
+void position_joueur(const t_plateau plateau, int *lig, int *col) {
+    /* On cherche @ ou + */
+    int i, j;
+    for (i = 0; i &lt; TAILLE; i++) {
+        for (j = 0; j &lt; TAILLE; j++) {
+            if (plateau[i][j] == SYM_SOKOBAN ||
+                plateau[i][j] == SYM_SOKOBAN_SUR_CIBLE) {
+                *lig = i;
+                *col = j;
+                return;
+            }
+        }
+    }
+}
+
+/*Cette fonction me simplifie les déplacements et me fais gagner de la place */
+void direction_depuis_touche(char touche, int *deltaY, int *deltaX, char *code) {
+    *deltaY = 0; *deltaX = 0; *code = &#x27;?&#x27;;
+
+    switch (touche) {
+        case TOUCHE_HAUT:   *deltaY = -1; *code = &#x27;h&#x27;; break;
+        case TOUCHE_BAS:    *deltaY =  1; *code = &#x27;b&#x27;; break;
+        case TOUCHE_GAUCHE: *deltaX = -1; *code = &#x27;g&#x27;; break;
+        case TOUCHE_DROITE: *deltaX =  1; *code = &#x27;d&#x27;; break;
+    }
+}
+
+void deplacer(t_plateau plateau, int *lig, int *col, char touche,
+              int *nbCoups, t_tabDeplacement hist) {
+
+    int deltaY, deltaX;
+    int y, x, nextY, nextX, pushY, pushX;
+    char code;
+    char *actuel, *suivant, *apres;
+
+    direction_depuis_touche(touche, &amp;deltaY, &amp;deltaX, &amp;code);
+    if (code == &#x27;?&#x27;) return;
+
+    y = *lig;
+    x = *col;
+    nextY = y + deltaY;
+    nextX = x + deltaX;
+    /* Sécurité bordure */
+    if (nextY &lt; 0 || nextY &gt;= TAILLE || nextX &lt; 0 || nextX &gt;= TAILLE) return;
+
+    actuel = &amp;plateau[y][x];
+    suivant = &amp;plateau[nextY][nextX];
+
+    /* Déplacement simple (vers vide ou cible) */
+    if (*suivant == SYM_VIDE || *suivant == SYM_CIBLE) {
+
+        *actuel = (*actuel == SYM_SOKOBAN_SUR_CIBLE) ?
+                    SYM_CIBLE : SYM_VIDE;
+
+        *suivant = (*suivant == SYM_CIBLE) ?
+                    SYM_SOKOBAN_SUR_CIBLE : SYM_SOKOBAN;
+
+        *lig = nextY;
+        *col = nextX;
+
+        if (*nbCoups &lt; MAX_HISTORIQUE)
+            hist[(*nbCoups)++] = code;
+    }
+
+    /* Poussée de caisse */
+    else if (*suivant == SYM_CAISSE ||
+             *suivant == SYM_CAISSE_SUR_CIBLE) {
+
+        pushY = nextY + deltaY;
+        pushX = nextX + deltaX;
+
+        if (pushY &lt; 0 || pushY &gt;= TAILLE ||
+            pushX &lt; 0 || pushX &gt;= TAILLE) return;
+
+        apres = &amp;plateau[pushY][pushX];
+
+        if (*apres == SYM_VIDE || *apres == SYM_CIBLE) {
+
+            *apres = (*apres == SYM_CIBLE) ?
+                      SYM_CAISSE_SUR_CIBLE : SYM_CAISSE;
+
+            *suivant = (*suivant == SYM_CAISSE_SUR_CIBLE) ?
+                         SYM_SOKOBAN_SUR_CIBLE : SYM_SOKOBAN;
+
+            *actuel = (*actuel == SYM_SOKOBAN_SUR_CIBLE) ?
+                        SYM_CIBLE : SYM_VIDE;
+
+            *lig = nextY;
+            *col = nextX;
+
+            if (*nbCoups &lt; MAX_HISTORIQUE)
+                hist[(*nbCoups)++] = (char)(code - 32); /* Majuscule */
+        }
+    }
+}
+
+/* ------------------------------------------------------------------------- */
+/*                                 UNDO                                      */
+/* ------------------------------------------------------------------------- */
+
+void annuler_coup(t_plateau plateau, t_tabDeplacement hist,
+                  int *nbCoups, int *lig, int *col) {
+
+    char mouv;
+    int deltaY = 0, deltaX = 0;
+    int y, x, prevY, prevX, caisseY, caisseX;
+
+    if (*nbCoups &lt;= 0) return;
+
+    mouv = hist[*nbCoups - 1];
+
+    /* Inversion du vecteur déplacement */
+    switch (mouv) {
+        case &#x27;h&#x27;: case &#x27;H&#x27;: deltaY =  1; break;
+        case &#x27;b&#x27;: case &#x27;B&#x27;: deltaY = -1; break;
+        case &#x27;g&#x27;: case &#x27;G&#x27;: deltaX =  1; break;
+        case &#x27;d&#x27;: case &#x27;D&#x27;: deltaX = -1; break;
+    }
+
+    y = *lig; x = *col;
+    prevY = y + deltaY; prevX = x + deltaX;
+
+    if (prevY &lt; 0 || prevY &gt;= TAILLE ||
+        prevX &lt; 0 || prevX &gt;= TAILLE) return;
+
+    /* Restaurer la case actuelle */
+    plateau[y][x] = (plateau[y][x] == SYM_SOKOBAN_SUR_CIBLE) ?
+                     SYM_CIBLE : SYM_VIDE;
+
+    /* Restaurer la position précédente du joueur */
+    plateau[prevY][prevX] = (plateau[prevY][prevX] == SYM_CIBLE) ?
+                              SYM_SOKOBAN_SUR_CIBLE : SYM_SOKOBAN;
+
+    /* Si c&#x27;était une poussée (Majuscule), on tire la caisse en arrière */
+    if (mouv &gt;= &#x27;A&#x27; &amp;&amp; mouv &lt;= &#x27;Z&#x27;) {
+        caisseY = y - deltaY;
+        caisseX = x - deltaX;
+
+        /* Enlever la caisse de sa position actuelle (devant le joueur) */
+        plateau[caisseY][caisseX] = (plateau[caisseY][caisseX] ==
+                                     SYM_CAISSE_SUR_CIBLE) ?
+                                     SYM_CIBLE : SYM_VIDE;
+
+        /* Remettre la caisse sur la case que le joueur vient de quitter (y,x) */
+        plateau[y][x] = (plateau[y][x] == SYM_CIBLE) ?
+                         SYM_CAISSE_SUR_CIBLE : SYM_CAISSE;
+    }
+
+    *lig = prevY;
+    *col = prevX;
+    (*nbCoups)--;
+}
+
+/* ------------------------------------------------------------------------- */
+/*                          TOUCHES ET FIN DE JEU                            */
+/* ------------------------------------------------------------------------- */
+
+void traiter_touche(t_plateau plateau, char touche, int *nbCoups,
+                    t_tabDeplacement hist, int *zoom,
+                    int *lig, int *col) {
+
+    switch (touche) {
+        case TOUCHE_ZOOM_PLUS:
+            if (*zoom &lt; 3) (*zoom)++;
+            break;
+
+        case TOUCHE_ZOOM_MOINS:
+            if (*zoom &gt; 1) (*zoom)--;
+            break;
+
+        case TOUCHE_ANNULER:
+            annuler_coup(plateau, hist, nbCoups, lig, col);
+            break;
+
+        default:
+            deplacer(plateau, lig, col, touche, nbCoups, hist);
+            break;
+    }
+}
+
+void gerer_fin_partie(t_plateau plateau, int nbCoups,
+                      t_tabDeplacement hist) {
+
+    char rep;
+    char nomFichier[60];
+
+    if (gagne(plateau)) {
+        printf(&quot;\nBravo ! Partie gagnee en %d coups.\n&quot;, nbCoups);
+    }
+    else {
+        printf(&quot;\nPartie abandonnee (%d coups).\n&quot;, nbCoups);
+
+        printf(&quot;Sauvegarder le plateau ? (o/n) : &quot;);
+        while (kbhit()) getchar();
+        scanf(&quot; %c&quot;, &amp;rep);
+
+        if (rep == &#x27;o&#x27; || rep == &#x27;O&#x27;) {
+            printf(&quot;Nom fichier .sok : &quot;);
+            scanf(&quot;%s&quot;, nomFichier);
+            enregistrerPartie(plateau, nomFichier);
+            printf(&quot;Sauvegarde OK.\n&quot;);
+        }
+    }
+
+    printf(&quot;Sauvegarder l&#x27;historique ? (o/n) : &quot;);
+    while (kbhit()) getchar();
+    scanf(&quot; %c&quot;, &amp;rep);
+
+    if (rep == &#x27;o&#x27; || rep == &#x27;O&#x27;) {
+        printf(&quot;Nom fichier .dep : &quot;);
+        scanf(&quot;%s&quot;, nomFichier);
+        enregistrerDeplacements(hist, nbCoups, nomFichier);
+        printf(&quot;Historique sauvegarde !\n&quot;);
+    }
+}
+
+/* ------------------------------------------------------------------------- */
+/*                         FONCTIONS FOURNIES                                */
+/* ------------------------------------------------------------------------- */
+
+int kbhit(){
+    int unCaractere = 0;
+    struct termios oldt, newt;
+    int ch;
+    int oldf;
+
+    tcgetattr(STDIN_FILENO, &amp;oldt);
+    newt = oldt;
+    newt.c_lflag &amp;= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &amp;newt);
+    oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+    fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+
+    ch = getchar();
+
+    tcsetattr(STDIN_FILENO, TCSANOW, &amp;oldt);
+    fcntl(STDIN_FILENO, F_SETFL, oldf);
+
+    if(ch != EOF){
+        ungetc(ch, stdin);
+        unCaractere = 1;
+    } 
+    return unCaractere;
+}
+
+void chargerPartie(t_plateau plateau, char fichier[]){
+    FILE *f;
+    char finDeLigne;
+
+    f = fopen(fichier, &quot;r&quot;);
+    if (f == NULL) {
+        printf(&quot;ERREUR SUR FICHIER&quot;);
+        exit(EXIT_FAILURE);
+    }
+
+    for (int ligne = 0; ligne &lt; TAILLE; ligne++) {
+        for (int colonne = 0; colonne &lt; TAILLE; colonne++) {
+            fread(&amp;plateau[ligne][colonne], sizeof(char), 1, f);
+        }
+        fread(&amp;finDeLigne, sizeof(char), 1, f);
+    }
+
+    fclose(f);
+}
+
+void enregistrerPartie(t_plateau plateau, char fichier[]){
+    FILE *f;
+    char fin = &#x27;\n&#x27;;
+
+    f = fopen(fichier, &quot;w&quot;);
+
+    for (int ligne = 0; ligne &lt; TAILLE; ligne++) {
+        for (int colonne = 0; colonne &lt; TAILLE; colonne++) {
+            fwrite(&amp;plateau[ligne][colonne], sizeof(char), 1, f);
+        }
+        fwrite(&amp;fin, sizeof(char), 1, f);
+    }
+
+    fclose(f);
+}
+
+void enregistrerDeplacements(t_tabDeplacement t, int nb, char fic[]){
+    FILE *f = fopen(fic, &quot;w&quot;);
+    fwrite(t, sizeof(char), nb, f);
+    fclose(f);
+}</code></pre>
+              </div>
+              <div class="mt-3 text-right">
+                <a href="Assets/SAE1.01/Sokoban_V2.c" download class="btn btn-secondary">📥 Télécharger (.c)</a>
+              </div>
+            </div>
+            <div id="res-consignes-v2" class="glass-pane">
+              <h3 class="mt-0 mb-3 text-gradient">Consignes (Version 2)</h3>
+              <iframe src="Assets/SAE1.01/Consignes%20Version%202.pdf" width="100%" height="600px" style="border:none; border-radius:8px;"></iframe>
+              <div class="mt-3 text-right">
+                <a href="Assets/SAE1.01/Consignes%20Version%202.pdf" download class="btn btn-secondary">📥 Télécharger (PDF)</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      </div> <!-- End of main container div -->
+</main>
+
+
+  <footer>
+    <div class="container text-center">
+      <p class="text-secondary">© 2026 Leny Langon. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    
+    // Version Switcher Logic
+    document.querySelectorAll('.v-switch').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.v-switch').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.version-content').forEach(c => c.classList.remove('active'));
+        
+        btn.classList.add('active');
+        const targetId = btn.getAttribute('data-v');
+        document.getElementById(targetId).classList.add('active');
+      });
+    });
+
+    // Glass Tabs Logic
+
+    document.querySelectorAll('.glass-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetId = tab.getAttribute('data-target');
+        const pane = document.getElementById(targetId);
+        
+        if (tab.classList.contains('active')) {
+          // Toggle off
+          tab.classList.remove('active');
+          pane.classList.remove('active');
+        } else {
+          // Turn off others
+          document.querySelectorAll('.glass-tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.glass-pane').forEach(p => p.classList.remove('active'));
+          
+          // Turn on this one
+          tab.classList.add('active');
+          pane.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
