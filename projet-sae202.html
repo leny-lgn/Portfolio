@@ -103,42 +103,6 @@
       <h2 class="text-gradient">💡 Ce que j'ai appris</h2>
       <p>Ce projet a constitué un grand bond en avant dans ma compréhension de l'algorithmique. J'ai saisi la différence fondamentale entre une approche naïve (qui explose exponentiellement) et une approche intelligente exploitant les mathématiques et la logique. La maîtrise du backtracking en Python est un atout majeur pour la résolution de problèmes d'optimisation.</p>
 
-      <h2 class="text-gradient mt-6 mb-4 text-center">📂 Ressources de la SAÉ</h2>
-      
-      <div class="resources-glass-container">
-        <div class="glass-tabs">
-          <button class="glass-tab active" data-target="res-s1">
-            <span class="tab-icon">📄</span>
-            <span class="tab-text">Sujet 1<br>(Cavalier)</span>
-          </button>
-          <button class="glass-tab" data-target="res-s2">
-            <span class="tab-icon">📄</span>
-            <span class="tab-text">Sujet 2<br>(Picross)</span>
-          </button>
-          <button class="glass-tab" data-target="res-cours">
-            <span class="tab-icon">📚</span>
-            <span class="tab-text">Analyse</span>
-          </button>
-        </div>
-        <div class="glass-content-area">
-          <div id="res-s1" class="glass-pane active">
-            <h3 class="mt-0 mb-3 text-gradient">Sujet : Tour du Cavalier</h3>
-            <p>Consignes pour l'exploration par backtracking.</p>
-            <a href="Assets/SAE/S2/SAE 2.02/SAE_01.pdf" class="btn btn-secondary" target="_blank">Consulter le PDF</a>
-          </div>
-          <div id="res-s2" class="glass-pane">
-            <h3 class="mt-0 mb-3 text-gradient">Sujet : Solveur Picross</h3>
-            <p>Consignes pour la propagation de contraintes.</p>
-            <a href="Assets/SAE/S2/SAE 2.02/SAE_P2.pdf" class="btn btn-secondary" target="_blank">Consulter le PDF</a>
-          </div>
-          <div id="res-cours" class="glass-pane">
-            <h3 class="mt-0 mb-3 text-gradient">Analyse Asymptotique</h3>
-            <p>Support théorique sur le calcul de complexité.</p>
-            <a href="Assets/SAE/S2/SAE 2.02/IntroAnalyseAssymptotique.pdf" class="btn btn-secondary" target="_blank">Consulter le PDF</a>
-          </div>
-        </div>
-      </div>
-
       </div>
     </div>
   </main>
@@ -146,16 +110,5 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="js/main.js"></script>
-  <script>
-    document.querySelectorAll('.glass-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        const targetId = tab.getAttribute('data-target');
-        tab.parentElement.querySelectorAll('.glass-tab').forEach(t => t.classList.remove('active'));
-        tab.closest('.resources-glass-container').querySelectorAll('.glass-pane').forEach(p => p.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById(targetId).classList.add('active');
-      });
-    });
-  </script>
 </body>
 </html>

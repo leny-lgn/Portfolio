@@ -105,33 +105,6 @@
       <h2 class="text-gradient">💡 Ce que j'ai appris</h2>
       <p>Cette SAÉ m'a permis de développer mes compétences en communication écrite et orale. Elle a surtout éveillé ma conscience sur l'empreinte écologique du numérique et sur la nécessité, en tant que futur professionnel de l'informatique, d'intégrer les principes de la RSE (Green IT, éco-conception) dans mes futurs projets.</p>
 
-      <h2 class="text-gradient mt-6 mb-4 text-center">📂 Ressources de la SAÉ</h2>
-      
-      <div class="resources-glass-container">
-        <div class="glass-tabs">
-          <button class="glass-tab active" data-target="res-prez">
-            <span class="tab-icon">📊</span>
-            <span class="tab-text">Présentation</span>
-          </button>
-          <button class="glass-tab" data-target="res-dossier">
-            <span class="tab-icon">📄</span>
-            <span class="tab-text">Consignes</span>
-          </button>
-        </div>
-        <div class="glass-content-area">
-          <div id="res-prez" class="glass-pane active">
-            <h3 class="mt-0 mb-3 text-gradient">Support de Présentation</h3>
-            <p>Diaporama utilisé lors de la soutenance orale de la SAÉ 1.06.</p>
-            <a href="Assets/SAE/S1/SAE 1.06/Présentation SAE 1.06.pdf" class="btn btn-secondary" target="_blank">Consulter le PDF</a>
-          </div>
-          <div id="res-dossier" class="glass-pane">
-            <h3 class="mt-0 mb-3 text-gradient">Consignes du Dossier</h3>
-            <p>Le cahier des charges attendu pour le dossier écrit d'analyse.</p>
-            <a href="Assets/SAE/S1/SAE 1.06/consignes_dossier_SAE_1.06.pdf" class="btn btn-secondary" target="_blank">Consulter le PDF</a>
-          </div>
-        </div>
-      </div>
-
       </div>
     </div>
   </main>
@@ -139,16 +112,5 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="js/main.js"></script>
-  <script>
-    document.querySelectorAll('.glass-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        const targetId = tab.getAttribute('data-target');
-        tab.parentElement.querySelectorAll('.glass-tab').forEach(t => t.classList.remove('active'));
-        tab.closest('.resources-glass-container').querySelectorAll('.glass-pane').forEach(p => p.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById(targetId).classList.add('active');
-      });
-    });
-  </script>
 </body>
 </html>

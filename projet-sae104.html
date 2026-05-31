@@ -106,42 +106,6 @@
       <h2 class="text-gradient">💡 Ce que j'ai appris</h2>
       <p>Ce projet m'a fait comprendre l'importance cruciale de la modélisation avant toute ligne de code. Une erreur dans le diagramme UML ou le dictionnaire de données se répercute inévitablement sur la qualité de la base de données finale. L'utilisation de Tutorial D a également renforcé ma compréhension théorique de l'algèbre relationnelle, me donnant de solides bases pour le SQL.</p>
 
-      <h2 class="text-gradient mt-6 mb-4 text-center">📂 Ressources de la SAÉ</h2>
-      
-      <div class="resources-glass-container">
-        <div class="glass-tabs">
-          <button class="glass-tab active" data-target="res-consigne">
-            <span class="tab-icon">📄</span>
-            <span class="tab-text">Sujet</span>
-          </button>
-          <button class="glass-tab" data-target="res-p1">
-            <span class="tab-icon">📊</span>
-            <span class="tab-text">Partie 1<br>(UML)</span>
-          </button>
-          <button class="glass-tab" data-target="res-p2">
-            <span class="tab-icon">💻</span>
-            <span class="tab-text">Partie 2<br>(Code)</span>
-          </button>
-        </div>
-        <div class="glass-content-area">
-          <div id="res-consigne" class="glass-pane active">
-            <h3 class="mt-0 mb-3 text-gradient">Sujet de la SAÉ</h3>
-            <p>Le cahier des charges détaillé pour le comparateur d'offres tarifaires.</p>
-            <a href="Assets/SAE/S1/SAE 1.04/FicheSAÉ-1.04-etu-2022-2023.pdf" class="btn btn-secondary" target="_blank">Consulter le PDF</a>
-          </div>
-          <div id="res-p1" class="glass-pane">
-            <h3 class="mt-0 mb-3 text-gradient">Partie 1 (ZIP)</h3>
-            <p>Archive contenant le dictionnaire de données et le diagramme UML.</p>
-            <a href="Assets/SAE/S1/SAE 1.04/Partie 1-20260531.zip" class="btn btn-secondary" download>Télécharger Partie 1</a>
-          </div>
-          <div id="res-p2" class="glass-pane">
-            <h3 class="mt-0 mb-3 text-gradient">Partie 2 (ZIP)</h3>
-            <p>Archive contenant les scripts Tutorial D et le schéma relationnel.</p>
-            <a href="Assets/SAE/S1/SAE 1.04/Partie 2-20260531.zip" class="btn btn-secondary" download>Télécharger Partie 2</a>
-          </div>
-        </div>
-      </div>
-
       </div>
     </div>
   </main>
@@ -149,16 +113,5 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="js/main.js"></script>
-  <script>
-    document.querySelectorAll('.glass-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        const targetId = tab.getAttribute('data-target');
-        tab.parentElement.querySelectorAll('.glass-tab').forEach(t => t.classList.remove('active'));
-        tab.closest('.resources-glass-container').querySelectorAll('.glass-pane').forEach(p => p.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById(targetId).classList.add('active');
-      });
-    });
-  </script>
 </body>
 </html>

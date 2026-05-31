@@ -136,33 +136,6 @@
       <h2 class="text-gradient">💡 Ce que j'ai appris</h2>
       <p>Ce projet m'a fait prendre conscience de la puissance de l'automatisation. J'ai acquis de solides bases en Bash et Docker, des outils incontournables dans le monde du développement moderne et du DevOps. De plus, j'ai appris à travailler efficacement en équipe sous la contrainte de livrables stricts.</p>
 
-      <h2 class="text-gradient mt-6 mb-4 text-center">📂 Ressources de la SAÉ</h2>
-      
-      <div class="resources-glass-container">
-        <div class="glass-tabs">
-          <button class="glass-tab active" data-target="res-sujet1">
-            <span class="tab-icon">📄</span>
-            <span class="tab-text">Sujet 1</span>
-          </button>
-          <button class="glass-tab" data-target="res-sujet2">
-            <span class="tab-icon">📄</span>
-            <span class="tab-text">Sujet 2</span>
-          </button>
-        </div>
-        <div class="glass-content-area">
-          <div id="res-sujet1" class="glass-pane active">
-            <h3 class="mt-0 mb-3 text-gradient">Sujet - Partie 1</h3>
-            <p>Consignes pour l'installation du poste et les premiers scripts Docker.</p>
-            <a href="Assets/SAE/S1/SAE 1.03/Sujet - Partie 1-20260531/SAÉ 1.03 - Sujet (Partie 1).pdf" class="btn btn-secondary" target="_blank">Consulter le PDF</a>
-          </div>
-          <div id="res-sujet2" class="glass-pane">
-            <h3 class="mt-0 mb-3 text-gradient">Sujet - Partie 2</h3>
-            <p>Consignes pour la chaîne de traitement automatisée.</p>
-            <a href="Assets/SAE/S1/SAE 1.03/Sujet - Partie 2-20260531/SAÉ 1.03 - Sujet (Partie 2).pdf" class="btn btn-secondary" target="_blank">Consulter le PDF</a>
-          </div>
-        </div>
-      </div>
-
       </div>
     </div>
   </main>
@@ -170,21 +143,5 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="js/main.js"></script>
-  <script>
-    // Tab switching logic
-    document.querySelectorAll('.glass-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        const targetId = tab.getAttribute('data-target');
-        
-        // Remove active class from all tabs and panes
-        tab.parentElement.querySelectorAll('.glass-tab').forEach(t => t.classList.remove('active'));
-        tab.closest('.resources-glass-container').querySelectorAll('.glass-pane').forEach(p => p.classList.remove('active'));
-        
-        // Add active class to clicked tab and target pane
-        tab.classList.add('active');
-        document.getElementById(targetId).classList.add('active');
-      });
-    });
-  </script>
 </body>
 </html>
