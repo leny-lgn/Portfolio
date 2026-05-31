@@ -452,7 +452,7 @@ section {
 
 .timeline-item:nth-child(odd) {
   left: 0;
-  text-align: right;
+  text-align: left;
 }
 
 .timeline-item:nth-child(even) {
@@ -491,6 +491,7 @@ section {
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   transform-origin: left top;
   transition: all 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+  align-self: flex-start;
 }
 
 .cv-section {
@@ -605,4 +606,108 @@ footer {
   header, footer, .floating-download, .noise-overlay, .gradient-mesh { display: none; }
   .cv-document { box-shadow: none; padding: 0; }
   .cv-detail-panel { display: none; }
+}
+
+.logo-img {
+  width: 60px !important;
+  height: 60px !important;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  object-fit: cover;
+  object-position: top;
+  transition: all var(--transition-normal);
+}
+
+header.scrolled .logo-img {
+  width: 48px !important;
+  height: 48px !important;
+}
+
+/* Orbital Avatar System */
+.orbital-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.orbital-center {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 3px solid var(--accent-primary);
+  box-shadow: 0 0 35px rgba(99, 102, 241, 0.4);
+  z-index: 10;
+  object-fit: cover;
+  object-position: top;
+  position: relative;
+}
+
+@keyframes orbit-spin {
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@keyframes orbit-spin-reverse {
+  100% { transform: translate(-50%, -50%) rotate(-360deg); }
+}
+@keyframes icon-anti-spin {
+  100% { transform: rotate(-360deg); }
+}
+@keyframes icon-anti-spin-reverse {
+  100% { transform: rotate(360deg); }
+}
+
+.orbit-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(0deg);
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+}
+
+.orbit-ring.ring-1 {
+  width: 250px;
+  height: 250px;
+  animation: orbit-spin 25s linear infinite;
+}
+
+.orbit-ring.ring-2 {
+  width: 350px;
+  height: 350px;
+  animation: orbit-spin-reverse 35s linear infinite;
+}
+
+.orbit-wrapper {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  transform: rotate(var(--angle));
+}
+
+.orbit-item {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  margin-left: -22px;
+  width: 44px;
+  height: 44px;
+  background: var(--bg-color);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+.orbit-ring.ring-1 .orbit-item {
+  animation: icon-anti-spin 25s linear infinite;
+}
+
+.orbit-ring.ring-2 .orbit-item {
+  animation: icon-anti-spin-reverse 35s linear infinite;
 }

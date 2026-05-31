@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Étude de Cas : SAÉ 1.04 - Création d'une Base de Données | Leny Langon</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Sora:wght@400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+    .case-study-content { max-width: 800px; margin: 0 auto; }
+    .case-study-content h2 { margin-top: 40px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+    .case-study-content h3 { margin-top: 30px; margin-bottom: 15px; color: var(--accent-secondary); }
+    .case-study-content p { margin-bottom: 15px; color: var(--text-secondary); }
+    .case-study-content ul { margin-bottom: 20px; padding-left: 20px; color: var(--text-secondary); }
+    .case-study-content li { margin-bottom: 10px; }
+    .back-link { display: inline-flex; align-items: center; color: var(--accent-secondary); margin-bottom: 30px; font-weight: 600; transition: color var(--transition-fast); }
+    .back-link:hover { color: var(--accent-primary); }
+    .back-link span { margin-right: 8px; }
+    .resources-glass-container { margin-top: 40px; }
+    .glass-tabs { display: flex; justify-content: center; gap: 25px; margin-bottom: 30px; flex-wrap: wrap; }
+    .glass-tab { width: 90px; height: 90px; border-radius: 50%; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-primary); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.4s; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); outline: none; }
+    .glass-tab:hover { transform: translateY(-8px); border-color: rgba(255, 255, 255, 0.3); box-shadow: 0 15px 35px 0 rgba(99, 102, 241, 0.3); }
+    .glass-tab.active { background: rgba(99, 102, 241, 0.15); border-color: var(--accent-primary); box-shadow: 0 0 25px rgba(99, 102, 241, 0.4); transform: scale(1.05); }
+    .glass-tab .tab-icon { font-size: 2rem; margin-bottom: 5px; }
+    .glass-tab .tab-text { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; text-align: center; line-height: 1.1; }
+    .glass-pane { display: none; background: rgba(20, 20, 25, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 25px; animation: floatIn 0.5s ease forwards; }
+    .glass-pane.active { display: block; }
+    @keyframes floatIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+  <div class="scroll-progress"></div>
+  <div class="noise-overlay"></div>
+  <div class="gradient-mesh"><div class="mesh-blob cyan"></div></div>
+
+  <header>
+    <a href="index.html" class="logo" style="display: flex; align-items: center;">
+      <img src="Assets/profil.png" alt="Leny Langon" class="logo-img">
+    </a>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-link">Accueil</a>
+      <a href="competences.html" class="nav-link">Compétences</a>
+      <a href="projets.html" class="nav-link active">Projets</a>
+      <a href="parcours.html" class="nav-link">Parcours</a>
+      <a href="cv.html" class="nav-link">CV</a>
+      <a href="contact.html" class="nav-link">Contact</a>
+    </nav>
+  </header>
+
+  <main style="padding-top: 120px; padding-bottom: 100px;">
+    <div class="container case-study-content fade-in-up">
+      
+      <a href="projets.html" class="back-link"><span>←</span> Retour aux projets</a>
+
+      <h1 class="hero-title text-gradient scramble-text mb-2 text-center" data-text="Création BDD (SAÉ 1.04)">Création BDD (SAÉ 1.04)</h1>
+      <div class="mb-4 text-center">
+        <span class="tag c4">Gérer les données</span>
+        <span class="tag c6">UML</span>
+        <span class="tag c3">SQL / Tutorial D</span>
+      </div>
+
+      <div class="version-content active">
+
+      <h2 class="text-gradient">🌟 Introduction</h2>
+      <p>La SAÉ 1.04 m'a confronté à un cas d'usage réaliste et complexe : concevoir la base de données d'un comparateur d'offres tarifaires de fournisseurs d'électricité.</p>
+
+      <h2 class="text-gradient">📍 Situation</h2>
+      <p>Dans un marché de l'énergie de plus en plus diversifié, le besoin était de concevoir un système capable de gérer de multiples fournisseurs, offres tarifaires, clients, et de stocker l'historique des relevés de compteurs communicants (type Linky).</p>
+
+      <h2 class="text-gradient">🎯 Task (Mission)</h2>
+      <p>La mission s'est déroulée en deux phases :</p>
+      <ul>
+        <li><strong>Modélisation Conceptuelle :</strong> Analyser le domaine métier, rédiger un dictionnaire de données et concevoir un diagramme de classes UML.</li>
+        <li><strong>Implémentation Logique et Physique :</strong> Traduire le modèle UML en schéma relationnel, définir les contraintes d'intégrité, et implémenter la base de données avec Tutorial D (un langage formel de requêtage relationnel).</li>
+      </ul>
+
+      <h2 class="text-gradient">🛠️ Action (Mise en œuvre)</h2>
+      
+      <h3>1. Analyse et Modélisation (UML)</h3>
+      <p>La première étape a été de structurer les informations :</p>
+      <ul>
+        <li>Identification des entités clés : Clients, Compteurs, Fournisseurs, Offres, Contrats, Relevés.</li>
+        <li>Gestion des spécificités métier : Les créneaux horaires (Heures Pleines / Heures Creuses) et leur tarification asymétrique.</li>
+        <li>Conception du diagramme de classes UML avec les associations (1-N, N-N).</li>
+      </ul>
+
+      <h3>2. Schéma Relationnel et Contraintes</h3>
+      <p>J'ai ensuite traduit le modèle conceptuel en un schéma relationnel strict :</p>
+      <ul>
+        <li>Définition des clés primaires et clés étrangères.</li>
+        <li>Mise en place de contraintes d'intégrité référentielles pour garantir la cohérence des données (ex: on ne peut pas avoir un relevé pour un compteur inexistant).</li>
+        <li>Création d'un graphe des contraintes pour visualiser les dépendances.</li>
+      </ul>
+
+      <h3>3. Implémentation en Tutorial D</h3>
+      <p>Enfin, le schéma a été codé :</p>
+      <ul>
+        <li>Écriture d'un script exécutable permettant de créer, supprimer, et recréer la base automatiquement.</li>
+        <li>Insertion de jeux de données de test.</li>
+      </ul>
+
+      <h2 class="text-gradient">🏆 Result (Résultat)</h2>
+      <p>Le projet a abouti à une modélisation complète et robuste, ainsi qu'à une base de données fonctionnelle respectant toutes les contraintes du cahier des charges. L'historisation des contrats et des offres permet de simuler de manière réaliste un comparateur d'énergie.</p>
+
+      <h2 class="text-gradient">💡 Ce que j'ai appris</h2>
+      <p>Ce projet m'a fait comprendre l'importance cruciale de la modélisation avant toute ligne de code. Une erreur dans le diagramme UML ou le dictionnaire de données se répercute inévitablement sur la qualité de la base de données finale. L'utilisation de Tutorial D a également renforcé ma compréhension théorique de l'algèbre relationnelle, me donnant de solides bases pour le SQL.</p>
+
+      <h2 class="text-gradient mt-6 mb-4 text-center">📂 Ressources de la SAÉ</h2>
+      
+      <div class="resources-glass-container">
+        <div class="glass-tabs">
+          <button class="glass-tab active" data-target="res-consigne">
+            <span class="tab-icon">📄</span>
+            <span class="tab-text">Sujet</span>
+          </button>
+          <button class="glass-tab" data-target="res-p1">
+            <span class="tab-icon">📊</span>
+            <span class="tab-text">Partie 1<br>(UML)</span>
+          </button>
+          <button class="glass-tab" data-target="res-p2">
+            <span class="tab-icon">💻</span>
+            <span class="tab-text">Partie 2<br>(Code)</span>
+          </button>
+        </div>
+        <div class="glass-content-area">
+          <div id="res-consigne" class="glass-pane active">
+            <h3 class="mt-0 mb-3 text-gradient">Sujet de la SAÉ</h3>
+            <p>Le cahier des charges détaillé pour le comparateur d'offres tarifaires.</p>
+            <a href="Assets/SAE/S1/SAE 1.04/FicheSAÉ-1.04-etu-2022-2023.pdf" class="btn btn-secondary" target="_blank">Consulter le PDF</a>
+          </div>
+          <div id="res-p1" class="glass-pane">
+            <h3 class="mt-0 mb-3 text-gradient">Partie 1 (ZIP)</h3>
+            <p>Archive contenant le dictionnaire de données et le diagramme UML.</p>
+            <a href="Assets/SAE/S1/SAE 1.04/Partie 1-20260531.zip" class="btn btn-secondary" download>Télécharger Partie 1</a>
+          </div>
+          <div id="res-p2" class="glass-pane">
+            <h3 class="mt-0 mb-3 text-gradient">Partie 2 (ZIP)</h3>
+            <p>Archive contenant les scripts Tutorial D et le schéma relationnel.</p>
+            <a href="Assets/SAE/S1/SAE 1.04/Partie 2-20260531.zip" class="btn btn-secondary" download>Télécharger Partie 2</a>
+          </div>
+        </div>
+      </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.querySelectorAll('.glass-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetId = tab.getAttribute('data-target');
+        tab.parentElement.querySelectorAll('.glass-tab').forEach(t => t.classList.remove('active'));
+        tab.closest('.resources-glass-container').querySelectorAll('.glass-pane').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(targetId).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -12,7 +12,9 @@
 
 
   <header>
-    <a href="index.html" class="logo">[LL]</a>
+    <a href="index.html" class="logo" style="display: flex; align-items: center;">
+      <img src="Assets/profil.png" alt="Leny Langon" class="logo-img">
+    </a>
     <nav class="nav-links">
       <a href="index.html" class="nav-link">Accueil</a>
       <a href="competences.html" class="nav-link">Compétences</a>
@@ -25,61 +27,24 @@
   </header>
 
   <main style="padding-top: 150px; padding-bottom: 100px;">
-    <div class="container grid-2" style="gap: 60px;">
+    <div class="container" style="max-width: 600px; margin: 0 auto; text-align: center;">
       
-      <!-- Left Panel: Info -->
+      <!-- Center Panel: Info -->
       <div class="fade-in-up">
-        <h1 class="hero-title mb-3 text-gradient scramble-text" data-text="Travaillons ensemble">Travaillons ensemble</h1>
-        <p class="text-secondary mb-4">Je suis actuellement à la recherche d'une alternance. N'hésitez pas à me contacter via le formulaire ou directement via mes réseaux.</p>
-        
-        <div class="mb-4">
-          <span class="tag c3 mb-3" style="display:inline-block;">● Disponible pour alternance — 2026-2029 ?</span>
-        </div>
+        <h1 class="hero-title mb-3 text-gradient scramble-text" data-text="Me Contacter">Me Contacter</h1>
+        <p class="text-secondary mb-4">N'hésitez pas à me contacter directement par e-mail ou sur LinkedIn pour échanger.</p>
 
-        <div style="display:flex; flex-direction:column; gap:15px;">
+        <div style="display:flex; flex-direction:column; gap:15px; text-align: left;">
           <a href="mailto:leny_langon@yahoo.com" class="card tilt-card" style="display:flex; align-items:center; gap:15px;">
             <span style="font-size:1.5rem;">📧</span> <span>leny_langon@yahoo.com</span>
           </a>
           <a href="https://www.linkedin.com/in/leny-langon" target="_blank" class="card tilt-card" style="display:flex; align-items:center; gap:15px;">
-            <span style="font-size:1.5rem;">💼</span> <span>LinkedIn</span>
+            <span style="font-size:1.5rem;">💼</span> <span>LinkedIn <span style="color: var(--text-secondary); font-size: 0.9rem; margin-left: 10px; font-family: 'JetBrains Mono', monospace;">linkedin.com/in/leny-langon</span></span>
           </a>
           <div class="card tilt-card" style="display:flex; align-items:center; gap:15px;">
             <span style="font-size:1.5rem;">📍</span> <span>Lannion, Bretagne, France</span>
           </div>
         </div>
-      </div>
-
-      <!-- Right Panel: Form -->
-      <div class="fade-in-up card" style="padding: 40px; background: rgba(255,255,255,0.02);">
-        <form action="https://formspree.io/f/placeholder" method="POST" style="display:flex; flex-direction:column; gap:20px;">
-          
-          <div>
-            <label for="name" class="text-secondary mb-1" style="display:block;">Nom complet</label>
-            <input type="text" id="name" name="name" required style="width:100%; padding:15px; border-radius:8px; background:var(--surface); border:1px solid var(--border-color); color:white; font-family:var(--font-body);">
-          </div>
-          
-          <div>
-            <label for="email" class="text-secondary mb-1" style="display:block;">Email professionnel</label>
-            <input type="email" id="email" name="email" required style="width:100%; padding:15px; border-radius:8px; background:var(--surface); border:1px solid var(--border-color); color:white; font-family:var(--font-body);">
-          </div>
-          
-          <div>
-            <label for="subject" class="text-secondary mb-1" style="display:block;">Sujet</label>
-            <select id="subject" name="subject" style="width:100%; padding:15px; border-radius:8px; background:var(--bg-color); border:1px solid var(--border-color); color:white; font-family:var(--font-body);">
-              <option value="Alternance/Stage">Demande d'Alternance / Stage</option>
-
-              <option value="Collaboration">Collaboration</option>
-              <option value="Autre">Autre</option>
-            </select>
-          </div>
-          
-          <div>
-            <label for="message" class="text-secondary mb-1" style="display:block;">Message</label>
-            <textarea id="message" name="message" rows="5" required style="width:100%; padding:15px; border-radius:8px; background:var(--surface); border:1px solid var(--border-color); color:white; font-family:var(--font-body); resize:vertical;"></textarea>
-          </div>
-          
-          <button type="submit" class="btn btn-primary" style="width:100%; font-size:1.1rem; justify-content:center;">Envoyer le message <span class="icon-arrow">→</span></button>
-        </form>
       </div>
 
     </div>

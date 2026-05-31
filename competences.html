@@ -18,14 +18,15 @@
   
 
   <header>
-    <a href="index.html" class="logo">[LL]</a>
+    <a href="index.html" class="logo" style="display: flex; align-items: center;">
+      <img src="Assets/profil.png" alt="Leny Langon" class="logo-img">
+    </a>
     <nav class="nav-links">
       <a href="index.html" class="nav-link">Accueil</a>
       <a href="competences.html" class="nav-link active">Compétences</a>
       <a href="projets.html" class="nav-link">Projets</a>
       <a href="parcours.html" class="nav-link">Parcours</a>
       <a href="cv.html" class="nav-link">CV</a>
-
       <a href="contact.html" class="nav-link">Contact</a>
     </nav>
   </header>
@@ -42,6 +43,7 @@
           <a href="#c4" class="btn btn-secondary">C4 - Gérer les données</a>
           <a href="#c5" class="btn btn-secondary">C5 - Conduire un projet</a>
           <a href="#c6" class="btn btn-secondary">C6 - Travailler en équipe</a>
+          <a href="#certifications" class="btn btn-secondary" style="margin-top: 20px; border-color: var(--accent-secondary); color: var(--accent-secondary);">Certifications</a>
         </nav>
       </aside>
 
@@ -49,39 +51,40 @@
       <div style="flex: 1;">
         <h1 class="hero-title scramble-text mb-4" data-text="Mes Compétences BUT">Mes Compétences BUT</h1>
         
-        <!-- Competency 1 -->
+        <!-- ======================= C1 – RÉALISER ======================= -->
         <section id="c1" class="mb-4" style="padding-top: 50px;">
           <div class="tag c1 mb-2">C1</div>
           <h2 class="mb-2">Réaliser un développement d'application</h2>
-          <p class="text-secondary mb-4"><strong>Description officielle :</strong> Concevoir, développer, et tester des applications informatiques en respectant les bonnes pratiques de développement.</p>
+          <p class="text-secondary mb-4"><strong>Description officielle :</strong> Concevoir, développer et tester des applications informatiques en respectant les bonnes pratiques de développement.</p>
           
           <h3 class="mb-2 text-gradient">Ma maîtrise</h3>
           <p class="mb-4">
-            Au cours de cette première année, j'ai développé une solide compréhension de la conception logicielle. 
-            [EXPLICATION PERSONNELLE SUR L'ACQUISITION DE CETTE COMPÉTENCE - À REMPLIR].
+            Au cours de cette première année de BUT, j'ai acquis une solide compréhension du cycle complet de développement d'une application. La SAÉ 1.01 m'a confronté dès le début à la programmation concrète d'un jeu de Sokoban en langage C : j'ai dû implémenter la gestion d'un plateau de jeu en mémoire (tableau 2D), la lecture/écriture de fichiers, la logique de déplacement du personnage et la poussée de caisses, en respectant des consignes précises et un cahier des charges structuré. J'ai appris à découper mon code en fonctions claires et réutilisables, à gérer les cas limites (murs, bords du plateau) et à tester méthodiquement chaque fonctionnalité. En parallèle, la SAÉ 1.05 m'a permis de développer un site web touristique complet en HTML, CSS et JavaScript, en partant d'un cahier des charges client, en passant par une charte graphique et des maquettes, jusqu'au développement responsive. Ces deux projets m'ont appris à transformer un besoin fonctionnel en code opérationnel.
           </p>
 
           <h3 class="mb-3">Preuves (Traces)</h3>
           <div class="grid-2 stagger-cards">
             <!-- Proof 1 -->
             <div class="card tilt-card card-glow">
-              <span class="tag">Projet SAÉ 1.01</span>
-              <h4 class="mt-2 mb-2">Sokoban v1 & v2</h4>
-              <p class="text-secondary mb-2">[DESCRIPTION DE CE QUI A ÉTÉ FAIT POUR PROUVER C1]</p>
-              <div class="mb-2"><span class="tag">Java</span> <span class="tag">Git</span></div>
+              <span class="tag">SAÉ 1.01</span>
+              <h4 class="mt-2 mb-2">Sokoban V1 & V2 — Jeu en C</h4>
+              <p class="text-secondary mb-2">Développement complet d'un jeu Sokoban en langage C : chargement de fichiers .sok, affichage coloré du plateau dans le terminal, gestion des déplacements (z/q/s/d), poussée de caisses, détection de victoire, sauvegarde de partie. La V2 a ajouté le zoom d'affichage (3 niveaux d'échelle), la mémorisation des déplacements et la fonction d'annulation (undo).</p>
+              <div class="mb-2"><span class="tag c1">C</span> <span class="tag c3">Terminal</span> <span class="tag c5">Fichiers</span></div>
+              <a href="projet-sokoban.html" class="btn btn-secondary mt-3" style="width:100%; box-sizing:border-box; font-size: 0.8rem; padding: 5px;">Voir le projet <span class="icon-arrow">→</span></a>
             </div>
             <!-- Proof 2 -->
             <div class="card tilt-card card-glow">
-              <span class="tag">Projet SAÉ 1.05</span>
-              <h4 class="mt-2 mb-2">Création d'un site Web</h4>
-              <p class="text-secondary mb-2">[DESCRIPTION DE CE QUI A ÉTÉ FAIT]</p>
-              <div class="mb-2"><span class="tag">HTML/CSS</span> <span class="tag">JS</span></div>
+              <span class="tag">SAÉ 1.05</span>
+              <h4 class="mt-2 mb-2">Site Web touristique</h4>
+              <p class="text-secondary mb-2">Conception et réalisation en équipe d'un site vitrine statique pour un pays, comprenant une page d'accueil, des pages de lieux incontournables, de personnages emblématiques et d'œuvres artistiques. Le site a été développé en version desktop puis rendu responsive avec des media queries, le tout versionné sous Git.</p>
+              <div class="mb-2"><span class="tag c2">HTML/CSS</span> <span class="tag c3">JavaScript</span> <span class="tag c5">Git</span></div>
+              <a href="projet-sae105.html" class="btn btn-secondary mt-3" style="width:100%; box-sizing:border-box; font-size: 0.8rem; padding: 5px;">Voir le projet <span class="icon-arrow">→</span></a>
             </div>
           </div>
           <hr style="border:none; border-top: 1px solid var(--border-color); margin-top: 50px;">
         </section>
 
-        <!-- Competency 2 -->
+        <!-- ======================= C2 – OPTIMISER ======================= -->
         <section id="c2" class="mb-4" style="padding-top: 50px;">
           <div class="tag c2 mb-2">C2</div>
           <h2 class="mb-2">Optimiser des applications informatiques</h2>
@@ -89,50 +92,173 @@
           
           <h3 class="mb-2 text-gradient">Ma maîtrise</h3>
           <p class="mb-4">
-            L'optimisation algorithmique est devenue un réflexe. 
-            [EXPLICATION PERSONNELLE].
+            L'optimisation algorithmique est devenue un véritable réflexe au fil de l'année. La SAÉ 1.02 m'a d'abord appris à écrire un Sokoban « autonome » capable de rejouer des solutions, puis à les optimiser en détectant et supprimant les déplacements inutiles et les séquences de mouvements qui ne font pas progresser la partie. Ce travail de suppression de séquences redondantes m'a fait comprendre concrètement l'importance de la complexité algorithmique. En semestre 2, la SAÉ 2.02 a poussé cette réflexion bien plus loin : j'ai implémenté en Python un algorithme de backtracking (DFS) pour résoudre le problème du Tour du Cavalier sur un échiquier, puis un solveur de Picross combinant force brute et propagation de contraintes. J'ai dû mesurer les performances (benchmarks) et comparer théoriquement les complexités des différentes approches, ce qui m'a permis de comprendre pourquoi une approche « intelligente » peut être des milliers de fois plus rapide qu'une exploration exhaustive.
           </p>
 
           <h3 class="mb-3">Preuves (Traces)</h3>
           <div class="grid-2 stagger-cards">
             <div class="card tilt-card card-glow">
-              <span class="tag">TP Noté</span>
-              <h4 class="mt-2 mb-2">Analyse de complexité Algorithmique (R1.01)</h4>
-              <p class="text-secondary mb-2">[DESCRIPTION DE CE QUI A ÉTÉ FAIT]</p>
+              <span class="tag">SAÉ 1.02</span>
+              <h4 class="mt-2 mb-2">Sokoban Autonome — Optimisation de solutions</h4>
+              <p class="text-secondary mb-2">Programmation d'un Sokoban qui rejoue automatiquement des suites de déplacements (fichiers .dep), puis optimisation en supprimant les déplacements non joués et les séquences inutiles (aller-retour sans pousser de caisse). Comparaison de la taille des solutions avant et après optimisation.</p>
+              <div class="mb-2"><span class="tag c1">C</span> <span class="tag c2">Optimisation</span></div>
+              <a href="projet-sokoban-autonome.html" class="btn btn-secondary mt-3" style="width:100%; box-sizing:border-box; font-size: 0.8rem; padding: 5px;">Voir le projet <span class="icon-arrow">→</span></a>
             </div>
             <div class="card tilt-card card-glow">
-              <span class="tag">Projet SAÉ 2.02</span>
-              <h4 class="mt-2 mb-2">Résolution de graphes en Python</h4>
-              <p class="text-secondary mb-2">[DESCRIPTION DE CE QUI A ÉTÉ FAIT]</p>
-              <div class="mb-2"><span class="tag">Python</span></div>
+              <span class="tag">SAÉ 2.02</span>
+              <h4 class="mt-2 mb-2">Exploration algorithmique — Cavalier & Picross</h4>
+              <p class="text-secondary mb-2">Implémentation du problème du Tour du Cavalier par DFS + backtracking, puis d'un solveur Picross combinant backtracking naïf et propagation de contraintes. Analyse de complexité (O(2^N×M) pour la force brute), benchmarks sur des grilles de taille croissante, et rédaction d'un rapport comparatif des approches.</p>
+              <div class="mb-2"><span class="tag c2">Python</span> <span class="tag c4">Graphes</span> <span class="tag c1">Backtracking</span></div>
+              <a href="projet-sae202.html" class="btn btn-secondary mt-3" style="width:100%; box-sizing:border-box; font-size: 0.8rem; padding: 5px;">Voir le projet <span class="icon-arrow">→</span></a>
             </div>
           </div>
           <hr style="border:none; border-top: 1px solid var(--border-color); margin-top: 50px;">
         </section>
 
-        <!-- (Placeholder sections for C3 to C6, similar structure, ensuring grading rubric is met) -->
+        <!-- ======================= C3 – ADMINISTRER ======================= -->
         <section id="c3" class="mb-4" style="padding-top: 50px;">
           <div class="tag c3 mb-2">C3</div>
           <h2 class="mb-2">Administrer des systèmes informatiques communicants complexes</h2>
-          <p class="mb-4 text-secondary">[DESCRIPTION ET PREUVES À COMPLÉTER - C3]</p>
+          <p class="text-secondary mb-4"><strong>Description officielle :</strong> Installer, configurer et maintenir des systèmes informatiques en réseau, en assurant leur bon fonctionnement et leur sécurité.</p>
+          
+          <h3 class="mb-2 text-gradient">Ma maîtrise</h3>
+          <p class="mb-4">
+            La SAÉ 1.03 m'a plongé dans l'administration système à travers un projet concret et professionnel : mettre en place une chaîne de traitement automatisée pour un site web du Ministère du Tourisme, en utilisant Docker et des scripts Bash/PHP. J'ai appris à créer et orchestrer des conteneurs Docker (images, volumes, réseau), à écrire des scripts Bash pour automatiser le traitement de fichiers (conversion de formats texte, redimensionnement d'images, tri et filtrage de données CSV), et à gérer la persistance des données entre conteneurs éphémères. Ce projet m'a fait comprendre l'intérêt de l'automatisation : plutôt que de traiter manuellement des fichiers à chaque mise à jour, la chaîne de traitement s'exécutait d'un seul coup, de bout en bout. J'ai également appris à respecter strictement des conventions de nommage et des contraintes de livraison, à l'image d'un environnement professionnel.
+          </p>
+
+          <h3 class="mb-3">Preuves (Traces)</h3>
+          <div class="grid-2 stagger-cards">
+            <div class="card tilt-card card-glow">
+              <span class="tag">SAÉ 1.03 — Partie A</span>
+              <h4 class="mt-2 mb-2">Installation d'un poste de développement</h4>
+              <p class="text-secondary mb-2">Mise en place de l'environnement Docker : récupération et configuration d'images, écriture de scripts de manipulation de fichiers texte et images, structuration du travail en équipe avec un fichier PARTICIPATION.md pour tracer la contribution de chacun.</p>
+              <div class="mb-2"><span class="tag c3">Docker</span> <span class="tag c4">Bash</span></div>
+              <a href="projet-sae103.html" class="btn btn-secondary mt-3" style="width:100%; box-sizing:border-box; font-size: 0.8rem; padding: 5px;">Voir le projet <span class="icon-arrow">→</span></a>
+            </div>
+            <div class="card tilt-card card-glow">
+              <span class="tag">SAÉ 1.03 — Partie B</span>
+              <h4 class="mt-2 mb-2">Chaîne de traitement automatisée</h4>
+              <p class="text-secondary mb-2">Conception d'une chaîne complète de traitement de données touristiques : transformation de fichiers Excel en tableaux triés, ajout de données départementales et régionales, génération automatique de PDF, le tout orchestré par des conteneurs Docker éphémères et des scripts Bash.</p>
+              <div class="mb-2"><span class="tag c3">Docker</span> <span class="tag c4">Bash</span> <span class="tag c5">PHP</span></div>
+              <a href="projet-sae103.html" class="btn btn-secondary mt-3" style="width:100%; box-sizing:border-box; font-size: 0.8rem; padding: 5px;">Voir le projet <span class="icon-arrow">→</span></a>
+            </div>
+          </div>
+          <hr style="border:none; border-top: 1px solid var(--border-color); margin-top: 50px;">
         </section>
-        
+
+        <!-- ======================= C4 – GÉRER LES DONNÉES ======================= -->
         <section id="c4" class="mb-4" style="padding-top: 50px;">
           <div class="tag c4 mb-2">C4</div>
           <h2 class="mb-2">Gérer des données de l'information</h2>
-          <p class="mb-4 text-secondary">[DESCRIPTION ET PREUVES À COMPLÉTER - C4 - SAÉ 1.04 Bases de données, R1.05]</p>
+          <p class="text-secondary mb-4"><strong>Description officielle :</strong> Concevoir, gérer et exploiter des bases de données en garantissant la cohérence et l'intégrité des données.</p>
+          
+          <h3 class="mb-2 text-gradient">Ma maîtrise</h3>
+          <p class="mb-4">
+            La SAÉ 1.04 m'a confronté à un cas d'usage réaliste et complexe : concevoir la base de données d'un comparateur d'offres tarifaires de fournisseurs d'électricité. En partant d'un cahier des charges détaillé (gestion des compteurs Linky, créneaux heures creuses/pleines, offres tarifaires multiples, historisation des contrats), j'ai dû réaliser un dictionnaire de données, un diagramme de classes UML, puis traduire ce modèle en schéma relationnel avec le langage Tutorial D. J'ai appris à identifier les entités, les relations (1-N, N-N), à définir des contraintes d'intégrité référentielles et à écrire un script automatisé de création de base de données. Ce projet m'a fait comprendre l'importance de la modélisation rigoureuse avant toute implémentation, et m'a donné une vision concrète de ce que signifie gérer la cohérence de données dans un système complexe.
+          </p>
+
+          <h3 class="mb-3">Preuves (Traces)</h3>
+          <div class="grid-2 stagger-cards">
+            <div class="card tilt-card card-glow">
+              <span class="tag">SAÉ 1.04 — Partie 1</span>
+              <h4 class="mt-2 mb-2">Modélisation — Comparateur d'électricité</h4>
+              <p class="text-secondary mb-2">Analyse du domaine métier (tarification électrique, compteurs Linky, heures creuses/pleines virtuelles), rédaction d'un dictionnaire de données et conception d'un diagramme de classes UML pour structurer les entités (fournisseurs, offres, contrats, relevés de compteurs).</p>
+              <div class="mb-2"><span class="tag c4">UML</span> <span class="tag c6">Modélisation</span></div>
+              <a href="projet-sae104.html" class="btn btn-secondary mt-3" style="width:100%; box-sizing:border-box; font-size: 0.8rem; padding: 5px;">Voir le projet <span class="icon-arrow">→</span></a>
+            </div>
+            <div class="card tilt-card card-glow">
+              <span class="tag">SAÉ 1.04 — Partie 2</span>
+              <h4 class="mt-2 mb-2">Implémentation en Tutorial D</h4>
+              <p class="text-secondary mb-2">Traduction du diagramme de classes en schéma relationnel avec Tutorial D : création des relations, définition des contraintes d'intégrité référentielles nommées, écriture d'un script exécutable de bout en bout pour réinitialiser et recréer la base automatiquement. Réalisation d'un graphe des contraintes d'intégrité.</p>
+              <div class="mb-2"><span class="tag c4">Tutorial D</span> <span class="tag c3">SQL</span></div>
+              <a href="projet-sae104.html" class="btn btn-secondary mt-3" style="width:100%; box-sizing:border-box; font-size: 0.8rem; padding: 5px;">Voir le projet <span class="icon-arrow">→</span></a>
+            </div>
+          </div>
+          <hr style="border:none; border-top: 1px solid var(--border-color); margin-top: 50px;">
         </section>
-        
+
+        <!-- ======================= C5 – CONDUIRE UN PROJET ======================= -->
         <section id="c5" class="mb-4" style="padding-top: 50px;">
           <div class="tag c5 mb-2">C5</div>
           <h2 class="mb-2">Conduire un projet</h2>
-          <p class="mb-4 text-secondary">[DESCRIPTION ET PREUVES À COMPLÉTER - C5]</p>
+          <p class="text-secondary mb-4"><strong>Description officielle :</strong> Planifier, organiser et suivre un projet informatique en respectant les délais, les ressources et les exigences de qualité.</p>
+          
+          <h3 class="mb-2 text-gradient">Ma maîtrise</h3>
+          <p class="mb-4">
+            La conduite de projet a été au cœur de plusieurs SAÉ, et en particulier de la SAÉ 1.05 (site web touristique). Ce projet m'a permis de vivre l'intégralité du cycle de gestion de projet : lecture et analyse d'un cahier des charges client, personnalisation du projet (choix du pays, des lieux, des personnages), création d'une arborescence du site, rédaction du contenu de chaque page, conception d'une charte graphique harmonisée, maquettage sur Figma en version desktop et mobile, puis développement itératif avec deux livrables distincts (version desktop puis responsive). J'ai appris à planifier le travail en équipe, à respecter des dates de livraison, à documenter mes choix et à adapter mon travail aux retours. La SAÉ 1.03 (chaîne Docker) a aussi contribué à cette compétence : la gestion des délais, le suivi de la participation de chaque membre via PARTICIPATION.md, et le respect strict des conventions de nommage m'ont donné une vision concrète de ce que signifie livrer un projet dans les règles.
+          </p>
+
+          <h3 class="mb-3">Preuves (Traces)</h3>
+          <div class="grid-2 stagger-cards">
+            <div class="card tilt-card card-glow">
+              <span class="tag">SAÉ 1.05</span>
+              <h4 class="mt-2 mb-2">Gestion de projet — Site Web touristique</h4>
+              <p class="text-secondary mb-2">Cycle complet de gestion de projet en équipe : expression des besoins, personnalisation du site (choix du pays, lieux, personnages, œuvres), arborescence du site, contenu des pages, charte graphique, maquettage Figma (desktop + mobile), développement itératif avec deux livrables, versionnage Git, et soutenance finale.</p>
+              <div class="mb-2"><span class="tag c5">Figma</span> <span class="tag c2">HTML/CSS</span> <span class="tag c5">Git</span></div>
+              <a href="projet-sae105.html" class="btn btn-secondary mt-3" style="width:100%; box-sizing:border-box; font-size: 0.8rem; padding: 5px;">Voir le projet <span class="icon-arrow">→</span></a>
+            </div>
+            <div class="card tilt-card card-glow">
+              <span class="tag">SAÉ 1.03</span>
+              <h4 class="mt-2 mb-2">Gestion d'équipe & Livrables — Chaîne Docker</h4>
+              <p class="text-secondary mb-2">Organisation du travail en équipe de 4 avec répartition des tâches, suivi de la participation via PARTICIPATION.md (pourcentage de contribution de chaque membre), respect strict de conventions de nommage et de dates de livraison imposées, comme dans un cadre professionnel.</p>
+              <div class="mb-2"><span class="tag c5">Organisation</span> <span class="tag c6">Travail d'équipe</span></div>
+              <a href="projet-sae103.html" class="btn btn-secondary mt-3" style="width:100%; box-sizing:border-box; font-size: 0.8rem; padding: 5px;">Voir le projet <span class="icon-arrow">→</span></a>
+            </div>
+          </div>
+          <hr style="border:none; border-top: 1px solid var(--border-color); margin-top: 50px;">
         </section>
-        
+
+        <!-- ======================= C6 – TRAVAILLER EN ÉQUIPE ======================= -->
         <section id="c6" class="mb-4" style="padding-top: 50px;">
           <div class="tag c6 mb-2">C6</div>
           <h2 class="mb-2">Travailler dans une équipe informatique</h2>
-          <p class="mb-4 text-secondary">[DESCRIPTION ET PREUVES À COMPLÉTER - C6]</p>
+          <p class="text-secondary mb-4"><strong>Description officielle :</strong> Identifier ses aptitudes pour travailler dans une équipe, s'intégrer dans un environnement professionnel et communiquer efficacement.</p>
+          
+          <h3 class="mb-2 text-gradient">Ma maîtrise</h3>
+          <p class="mb-4">
+            Le travail en équipe a été une constante tout au long de l'année, mais c'est la SAÉ 1.06 qui m'a fait prendre le plus de recul sur cette compétence. Ce projet transversal m'a amené à étudier une organisation internationale sous l'angle de la responsabilité sociétale et environnementale (RSE), en mobilisant des ressources de gestion des organisations, d'économie durable et de communication. J'ai dû réaliser un diagnostic externe complet, rédiger un dossier structuré et présenter oralement le travail de notre équipe. Au-delà de cette SAÉ dédiée, le travail de groupe sur les SAÉ 1.03, 1.04 et 1.05 m'a appris concrètement à répartir les tâches, à communiquer efficacement (via Teams, Git et des réunions régulières), à gérer les conflits de planning et à m'assurer que chaque membre puisse contribuer selon ses forces. J'ai appris à donner et recevoir des retours constructifs, et à m'adapter au rythme et aux compétences de mes coéquipiers.
+          </p>
+
+          <h3 class="mb-3">Preuves (Traces)</h3>
+          <div class="grid-2 stagger-cards">
+            <div class="card tilt-card card-glow">
+              <span class="tag">SAÉ 1.06</span>
+              <h4 class="mt-2 mb-2">Environnement économique & écologique</h4>
+              <p class="text-secondary mb-2">Étude d'une organisation internationale sous l'angle de la RSE : réalisation d'une fiche de caractéristiques, diagnostic externe complet (analyse de l'environnement économique et écologique), rédaction d'un dossier structuré et présentations orales évaluées. Travail en équipe de 4 avec répartition des recherches et de la rédaction.</p>
+              <div class="mb-2"><span class="tag c6">Communication</span> <span class="tag c5">RSE</span> <span class="tag c4">Gestion</span></div>
+              <a href="projet-sae106.html" class="btn btn-secondary mt-3" style="width:100%; box-sizing:border-box; font-size: 0.8rem; padding: 5px;">Voir le projet <span class="icon-arrow">→</span></a>
+            </div>
+            <div class="card tilt-card card-glow">
+              <span class="tag">SAÉ 1.03, 1.04, 1.05</span>
+              <h4 class="mt-2 mb-2">Collaboration en équipe sur les projets techniques</h4>
+              <p class="text-secondary mb-2">Travail collaboratif sur l'ensemble des SAÉ techniques du semestre 1 : répartition des tâches, coordination via Teams et canaux privés, suivi de la participation de chaque membre, versionnage collaboratif avec Git. Apprentissage de la gestion des différences de rythme et des compétences au sein d'un groupe.</p>
+              <div class="mb-2"><span class="tag c6">Équipe</span> <span class="tag c5">Git</span> <span class="tag c3">Teams</span></div>
+              <a href="projets.html" class="btn btn-secondary mt-3" style="width:100%; box-sizing:border-box; font-size: 0.8rem; padding: 5px;">Voir tous les projets <span class="icon-arrow">→</span></a>
+            </div>
+          </div>
+        </section>
+
+        <!-- ======================= CERTIFICATIONS ======================= -->
+        <hr style="border:none; border-top: 1px solid var(--border-color); margin-top: 50px; margin-bottom: 50px;">
+        <section id="certifications" class="mb-4">
+          <div class="tag c3 mb-2" style="background: rgba(100, 255, 218, 0.1); color: var(--accent-secondary);">Certifications</div>
+          <h2 class="mb-2">Mes Certifications Professionnelles</h2>
+          <p class="text-secondary mb-4"><strong>Validation des acquis :</strong> Diplômes et badges certifiants obtenus en dehors ou en complément du cursus académique.</p>
+          
+          <div class="grid-2 stagger-cards">
+            <div class="card tilt-card card-glow" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
+              <img src="Assets/certif_cisco/introduction-to-cybersecurity.png" alt="Badge Cisco" style="width:120px; height:auto; margin-bottom: 15px;">
+              <h4 class="mt-2 mb-2">Introduction to Cybersecurity</h4>
+              <p class="text-secondary mb-2">Certification officielle délivrée par Cisco Networking Academy attestant des connaissances fondamentales en cybersécurité, protection des réseaux et défense des systèmes.</p>
+              <div class="mb-2"><span class="tag c1">Cybersécurité</span> <span class="tag c5">Cisco</span></div>
+              <a href="https://www.credly.com/badges/1de4e9e2-ebd5-4de1-8770-fdc9442660db/public_url" target="_blank" class="btn btn-secondary mt-3" style="width:100%; box-sizing:border-box; font-size: 0.8rem; padding: 5px;">Voir le badge Credly <span class="icon-arrow">→</span></a>
+              <a href="Assets/certif_cisco/certif_cisco.pdf" target="_blank" class="btn btn-primary mt-2" style="width:100%; box-sizing:border-box; font-size: 0.8rem; padding: 5px;">Télécharger le certificat (PDF)</a>
+            </div>
+            
+            <div class="card tilt-card card-glow" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+               <img src="Assets/certif_cisco/Certif_CISCO_Cyber.png" alt="Certificat Cisco Cyber" style="width:100%; height:auto; border-radius: 8px; border: 1px solid var(--border-color);">
+            </div>
+          </div>
         </section>
 
       </div>

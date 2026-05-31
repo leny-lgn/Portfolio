@@ -1,0 +1,101 @@
+IUT de Lannion
+BUT Informatique
+Semestre 2
+
+CONSIGNES DE L’ÉVALUATION DU PORTFOLIO
+PAGE PERSONNELLE
+Rappels de ce que nous avons vu au semestre 1 :
+
+
+
+
+
+
+
+Notion de Portfolio
+Usages du Portfolio
+Démarche réflexive du Portfolio
+Notions de preuve et de trace
+Apprendre à organiser la collecte et le stockage des traces de son portfolio
+Savoir commenter les traces pour en faire des preuves d’acquisition des compétences
+
+Au semestre 2 :
+ Construire son portfolio
+ Présenter oralement ses compétences de 1ère année de BUT Informatique
+
+I/ Quel sera votre travail sur le semestre 2 ?
+Votre travail consistera à créer une page personnelle (= site internet)
+L’objectif de votre page personnelle sera de savoir se présenter et être capable de valoriser ses
+compétences (les 6 compétences du BUT informatique de première année seront évaluées).
+La page personnelle permettra de montrer que vous maîtrisez les 6 compétences (notions de
+traces et de preuves, cf cours de Portfolio du semestre 1).
+Cette page personnelle se fera à l’aide d’un CMS gratuit disponible en ligne (Wix, etc.) ou en
+html/css avec un hébergement laissé à votre appréciation.
+Liste possible (et non exhaustive) de certains CMS disponibles en ligne :
+https://www.blogduwebdesign.com/pages/outils-web/outils-tech/cms/
+Si vous le souhaitez, vous pouvez créer votre page personnelle en html/css mais ce travail ne
+donnera pas de points supplémentaires (aucun des enseignants de cette matière n’est
+informaticien).
+Vous pourrez trouver des tutoriels en ligne pour vous aider à la prise en main des CMS.
+Page 1 sur 3
+
+Les enseignants ne vous aideront pas sur les aspects techniques, seulement sur le contenu du
+portfolio et la valorisation des compétences.
+
+II/ Quand se fera ce travail ?
+La création de la page personnelle et du contenu du portfolio se fera au cours des séances dédiées,
+soit 4 heures entre mars et fin mai.
+
+III/ Comment se lancer dans la création de la page personnelle ?
+Il vous est fortement suggéré de mettre en application ce que vous avez appris dans les différents
+cours (preuve alors que le portfolio a toute son utilité), en prévoyant une maquette et une
+arborescence avant de commencer le site afin d’articuler les différentes rubriques entre-elles, les
+liens entre les pages, etc.
+Cette partie technique ne sera pas évaluée mais cela vous aidera à mieux visualiser le contenu de
+votre site.
+
+IV/ Quel contenu sur la page personnelle ?
+ Se présenter brièvement, donner ses objectifs (alternance, stage, domaine visé)
+ Présenter ses diplômes, sa formation
+ Présenter ses 6 compétences (elles doivent toutes être présentes), justifier leur acquisition
+avec les preuves et traces
+ Mettre en valeur sa page personnelle (navigation, esthétisme, lisibilité, expression, etc.)
+ S’aider du travail préparatoire fait au S1 (notamment le tableau des compétences, dossiers
+archivés dans lesquels sont rangées les traces, la conception des preuves, etc.)
+ S’aider de la grille de notation pour savoir sur quels points vous serez évalués
+
+V/ Dépôt du site internet
+Vous déposerez le lien URL de votre page personnelle sur le fichier Excel disponible sur Teams,
+dans la classe Portfolio Étudiants BUT1 (ou encore via Moodle dans le cours Portfolio), au plus tard
+le dimanche 31 mai 2026 avant minuit.
+Il est important de bien déposer le lien URL dans le tableau de votre groupe de TD (un onglet par
+groupe TD).
+Rappel : votre site doit être visible (pour nous, les enseignants) et facilement accessible en ligne
+depuis un poste de l’IUT ou de tout autre poste.
+Votre site peut être caché au reste du monde si vous le souhaitez, mais il vous faudra donner
+l’accès de votre site à votre enseignant.e.
+Vous devrez faire en sorte que le lien URL vers votre page personnelle soit actif même au-delà de
+la fin des cours de portfolio (tout le temps nécessaire à l’évaluation de votre travail).
+Page 2 sur 3
+
+VI/ Présentation orale de votre page personnelle
+L’évaluation orale de la page personnelle aura lieu la semaine du 1 er juin et du 8 juin 2026.
+Durée de votre présentation orale : 7 minutes
+Un tirage au sort peut être organisé par votre enseignant.e et déterminera votre ordre de passage.
+Durant les 7 minutes, vous présenterez votre page personnelle en insistant bien sur tous les
+critères évalués (cf grille de notation de la page personnelle sur Moodle).
+Inutile de parler de l’aspect technique (html, choix du cms, etc.) de votre site (les explications de la
+conception du site n’étant pas attendues).
+Nous vous conseillons de bien suivre les critères de la grille de notation pour faire la
+présentation orale de votre page personnelle la plus complète possible.
+Il n’y a pas d’autre support de présentation que votre page personnelle !
+Vous accéderez directement à votre page en passant par le tableau des liens URL de chaque
+groupe de TD.
+Vous devrez bien insister sur la présentation des 6 compétences du BUT Informatique, en
+précisant les compétences et les preuves et traces correspondantes.
+
+Bon travail !
+
+Page 3 sur 3
+
+

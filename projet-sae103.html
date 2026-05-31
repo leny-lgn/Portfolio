@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Étude de Cas : SAÉ 1.03 - Installation de postes Linux | Leny Langon</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Sora:wght@400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+    .case-study-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .case-study-content h2 {
+      margin-top: 40px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+    .case-study-content h3 {
+      margin-top: 30px;
+      margin-bottom: 15px;
+      color: var(--accent-secondary);
+    }
+    .case-study-content p {
+      margin-bottom: 15px;
+      color: var(--text-secondary);
+    }
+    .case-study-content ul {
+      margin-bottom: 20px;
+      padding-left: 20px;
+      color: var(--text-secondary);
+    }
+    .case-study-content li {
+      margin-bottom: 10px;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      color: var(--accent-secondary);
+      margin-bottom: 30px;
+      font-weight: 600;
+      transition: color var(--transition-fast);
+    }
+    .back-link:hover {
+      color: var(--accent-primary);
+    }
+    .back-link span {
+      margin-right: 8px;
+    }
+    
+    /* --- Glass Tabs UI --- */
+    .resources-glass-container { margin-top: 40px; }
+    .glass-tabs { display: flex; justify-content: center; gap: 25px; margin-bottom: 30px; flex-wrap: wrap; }
+    .glass-tab { width: 90px; height: 90px; border-radius: 50%; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-primary); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.4s; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); outline: none; }
+    .glass-tab:hover { transform: translateY(-8px); border-color: rgba(255, 255, 255, 0.3); box-shadow: 0 15px 35px 0 rgba(99, 102, 241, 0.3); }
+    .glass-tab.active { background: rgba(99, 102, 241, 0.15); border-color: var(--accent-primary); box-shadow: 0 0 25px rgba(99, 102, 241, 0.4); transform: scale(1.05); }
+    .glass-tab .tab-icon { font-size: 2rem; margin-bottom: 5px; }
+    .glass-tab .tab-text { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+    .glass-pane { display: none; background: rgba(20, 20, 25, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 25px; animation: floatIn 0.5s ease forwards; }
+    .glass-pane.active { display: block; }
+    @keyframes floatIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+  <div class="scroll-progress"></div>
+  <div class="noise-overlay"></div>
+  <div class="gradient-mesh"><div class="mesh-blob purple"></div></div>
+
+  <header>
+    <a href="index.html" class="logo" style="display: flex; align-items: center;">
+      <img src="Assets/profil.png" alt="Leny Langon" class="logo-img">
+    </a>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-link">Accueil</a>
+      <a href="competences.html" class="nav-link">Compétences</a>
+      <a href="projets.html" class="nav-link active">Projets</a>
+      <a href="parcours.html" class="nav-link">Parcours</a>
+      <a href="cv.html" class="nav-link">CV</a>
+      <a href="contact.html" class="nav-link">Contact</a>
+    </nav>
+  </header>
+
+  <main style="padding-top: 120px; padding-bottom: 100px;">
+    <div class="container case-study-content fade-in-up">
+      
+      <a href="projets.html" class="back-link"><span>←</span> Retour aux projets</a>
+
+      <h1 class="hero-title text-gradient scramble-text mb-2 text-center" data-text="Installation d'un poste (SAÉ 1.03)">Installation d'un poste (SAÉ 1.03)</h1>
+      <div class="mb-4 text-center">
+        <span class="tag c3">Administration Système</span>
+        <span class="tag c4">Docker</span>
+        <span class="tag c5">Bash</span>
+      </div>
+
+      <div class="version-content active">
+
+      <h2 class="text-gradient">🌟 Introduction</h2>
+      <p>La SAÉ 1.03 m'a plongé dans l'administration système à travers un projet concret et professionnel : mettre en place une chaîne de traitement automatisée pour un site web, en utilisant Docker et des scripts Bash/PHP.</p>
+
+      <h2 class="text-gradient">📍 Situation</h2>
+      <p>L'objectif était de comprendre l'intérêt de l'automatisation en informatique : au lieu de manipuler manuellement des fichiers à chaque mise à jour de données, il fallait concevoir une infrastructure où une simple commande permet de générer des résultats complets de bout en bout.</p>
+
+      <h2 class="text-gradient">🎯 Task (Mission)</h2>
+      <p>La mission était divisée en deux parties principales :</p>
+      <ul>
+        <li><strong>Partie A :</strong> Installation d'un poste de développement, configuration d'un environnement Docker, et réalisation de premiers scripts de manipulation de fichiers.</li>
+        <li><strong>Partie B :</strong> Conception d'une chaîne complète de traitement automatisée : de la transformation de données brutes (fichiers Excel) à la génération de documents formatés (PDF/HTML), orchestrée par des conteneurs éphémères.</li>
+      </ul>
+
+      <h2 class="text-gradient">🛠️ Action (Mise en œuvre)</h2>
+      
+      <h3>1. Orchestration avec Docker</h3>
+      <p>J'ai appris à utiliser Docker pour isoler l'environnement de traitement :</p>
+      <ul>
+        <li>Récupération et configuration d'images Docker.</li>
+        <li>Gestion des volumes pour persister les données entre l'exécution de conteneurs éphémères.</li>
+        <li>Mise en réseau de conteneurs pour permettre leur communication.</li>
+      </ul>
+
+      <h3>2. Scripting Bash et Traitement de Données</h3>
+      <p>Le cœur du projet résidait dans l'écriture de scripts Bash robustes :</p>
+      <ul>
+        <li>Conversion et formatage de fichiers texte (CSV).</li>
+        <li>Redimensionnement et traitement en lot d'images.</li>
+        <li>Génération automatique de fichiers finaux (PDF) à partir des données traitées.</li>
+      </ul>
+
+      <h3>3. Travail en Équipe et Livrables</h3>
+      <p>Ce projet s'est déroulé en équipe de 4. Nous avons structuré notre travail à l'aide d'un fichier <code>PARTICIPATION.md</code> pour tracer la contribution de chacun, tout en respectant strictement des conventions de nommage et des dates de livraison.</p>
+
+      <h2 class="text-gradient">🏆 Result (Résultat)</h2>
+      <p>Le résultat final est une chaîne de traitement fonctionnelle capable de prendre en entrée un dossier de données brutes et de produire en sortie l'ensemble des documents formatés, le tout orchestré par une simple ligne de commande lançant les conteneurs Docker appropriés.</p>
+
+      <h2 class="text-gradient">💡 Ce que j'ai appris</h2>
+      <p>Ce projet m'a fait prendre conscience de la puissance de l'automatisation. J'ai acquis de solides bases en Bash et Docker, des outils incontournables dans le monde du développement moderne et du DevOps. De plus, j'ai appris à travailler efficacement en équipe sous la contrainte de livrables stricts.</p>
+
+      <h2 class="text-gradient mt-6 mb-4 text-center">📂 Ressources de la SAÉ</h2>
+      
+      <div class="resources-glass-container">
+        <div class="glass-tabs">
+          <button class="glass-tab active" data-target="res-sujet1">
+            <span class="tab-icon">📄</span>
+            <span class="tab-text">Sujet 1</span>
+          </button>
+          <button class="glass-tab" data-target="res-sujet2">
+            <span class="tab-icon">📄</span>
+            <span class="tab-text">Sujet 2</span>
+          </button>
+        </div>
+        <div class="glass-content-area">
+          <div id="res-sujet1" class="glass-pane active">
+            <h3 class="mt-0 mb-3 text-gradient">Sujet - Partie 1</h3>
+            <p>Consignes pour l'installation du poste et les premiers scripts Docker.</p>
+            <a href="Assets/SAE/S1/SAE 1.03/Sujet - Partie 1-20260531/SAÉ 1.03 - Sujet (Partie 1).pdf" class="btn btn-secondary" target="_blank">Consulter le PDF</a>
+          </div>
+          <div id="res-sujet2" class="glass-pane">
+            <h3 class="mt-0 mb-3 text-gradient">Sujet - Partie 2</h3>
+            <p>Consignes pour la chaîne de traitement automatisée.</p>
+            <a href="Assets/SAE/S1/SAE 1.03/Sujet - Partie 2-20260531/SAÉ 1.03 - Sujet (Partie 2).pdf" class="btn btn-secondary" target="_blank">Consulter le PDF</a>
+          </div>
+        </div>
+      </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Tab switching logic
+    document.querySelectorAll('.glass-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetId = tab.getAttribute('data-target');
+        
+        // Remove active class from all tabs and panes
+        tab.parentElement.querySelectorAll('.glass-tab').forEach(t => t.classList.remove('active'));
+        tab.closest('.resources-glass-container').querySelectorAll('.glass-pane').forEach(p => p.classList.remove('active'));
+        
+        // Add active class to clicked tab and target pane
+        tab.classList.add('active');
+        document.getElementById(targetId).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
